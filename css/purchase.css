@@ -1,0 +1,32 @@
+.container-items {
+  padding: 0 1rem 0 0;
+  height: 60vh;
+  width: 45vw;
+  overflow: auto;
+  border: solid 1px black;
+}
+
+.pay-button {
+  padding:5px 15px; 
+  font-size: 14px;
+  width: 30px;
+  overflow:hidden;
+  border:none;
+  background: rgb(6, 116, 17);
+  color: rgb(6, 116, 17);
+  height:auto;
+  outline: none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px; 
+}
+
+.input-number {
+  width: 40px;
+}
+
+.description {
+  font-size: x-small;
+  color: darkslategray;
+}

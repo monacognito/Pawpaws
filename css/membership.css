@@ -1,0 +1,48 @@
+.container-new-member {
+  border: solid 1px black;
+  padding: 0 2rem 2rem 2rem;
+}
+
+h2 {
+  text-align: center;
+}
+
+.block {
+  display: block;
+}
+
+form {
+  display:inline; 
+  margin:0px;
+  padding:0px;
+}
+
+.delete-button {
+  padding:5px 15px; 
+  font-size: 14px;
+  border:none;
+  background: rgb(255, 0, 0);
+  color: rgb(255, 0, 0);
+  width: 30px;
+  height:auto;
+  outline: none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px; 
+}
+
+.extend-button {
+  padding:5px 15px; 
+  font-size: 14px;
+  border:none;
+  background: rgb(0, 255, 26);
+  color: rgb(0, 255, 26);
+  width: 30px;
+  height:auto;
+  outline: none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px; 
+}
