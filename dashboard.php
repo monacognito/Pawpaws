@@ -73,7 +73,6 @@
         <a href="grooming.php" class="navbar-item">Grooming</a>
         <a href="purchase.php" class="navbar-item">Purchase</a>
         <a href="membership.php" class="navbar-item">Membership</a>
-        <a href="debug.php" class="navbar-debug">Debug</a>
       </div>
       <a href="logout.php" class="navbar-item">Logout</a>
     </div>
@@ -81,7 +80,7 @@
   <div class="flex body-container">
     <?php echo $error; ?>
     <div class="flex-40">
-      <h2>purchases history</h2>
+      <h2>Purchases History</h2>
       <div class="container-items flex-col overflow-auto h-100">
         <ul>
           <?php
@@ -99,14 +98,14 @@
             }
           } else { ?>
               <tr>
-                <div colspan="8">no data found</div>
+                <div colspan="8">No data found</div>
               </tr>
           <?php } ?>
         </ul>
       </div>
     </div>
     <div class="flex-30">
-      <h2>today's groomings</h2>
+      <h2>Today's groomings</h2>
       <div class="container-items flex-col overflow-auto h-100">
         <ul>
           <?php
@@ -115,7 +114,7 @@
             while ($data = mysqli_fetch_assoc($result_today_groomings)) {
               ?>
                 <li>
-                  <div>scheduled at <?php echo $data['time']; ?></div>
+                  <div>Scheduled at <?php echo $data['time']; ?></div>
                   <div>(ID: <?php echo $data['groom_id']; ?>)
                     <b><?php echo $data['name']; ?></b> - <?php echo $data['type']; ?> 
                   </div>
@@ -132,7 +131,7 @@
             }
           } else { ?>
               <tr>
-                <div colspan="8">no data found</div>
+                <div colspan="8">No data found</div>
               </tr>
           <?php } ?>
         </ul>

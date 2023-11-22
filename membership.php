@@ -8,7 +8,7 @@
         exit;
     }
 
-    require_once 'config/database.php';
+    require_once 'controllers/connection.php';
 
     // Get members 
     $query_active_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
@@ -120,7 +120,6 @@
         <a href="grooming.php" class="navbar-item">Grooming</a>
         <a href="purchase.php" class="navbar-item">Purchase</a>
         <a href="membership.php" class="navbar-item navbar-on">Membership</a>
-        <a href="debug.php" class="navbar-debug">Debug</a>
         <div class="h-20px flex-row mt-10px">
           <input class="delete-button" style="height:30px" type="submit" name="" value="0">
           <div>-delete</div>
@@ -140,28 +139,28 @@
         <?php echo $submit_result; ?>
         <?php echo $error; ?>
         <form action="membership.php" method ="post">
-          <h2>new member</h2>
+          <h2>New Member</h2>
           <label>name</label>
           <input class="block" required="required" type="text" name="name" maxlength="50" placeholder="Bonne">
-          <label>animal breed</label>
+          <label>Animal Breed</label>
           <input class="block" required="required"  type="text" name="type" maxlength="50" placeholder="Chihuahua Dog">
           <fieldset>
             <legend>gender</legend>
             <input type="radio" name="gender" checked="checked" value="m" id="gender_m">
-            <label for="gender_m">male</label>
+            <label for="gender_m">Male</label>
             <input type="radio" name="gender" value="f" id="gender_f">
-            <label for="gender_f">female</label>
+            <label for="gender_f">Female</label>
           </fieldset>
-          <label>owner's mobile</label>
+          <label>Owner's mobile</label>
           <input class="block" required="required" type="text" name="owner_mobile" maxlength="14" placeholder="085320002000">
-          <label>address</label>
+          <label>Address</label>
           <input class="block" required="required" type="text" name="address" maxlength="50" placeholder="9 Blue Ave. Cimahi">
           <input type="submit" name="newMemberSubmit" value="submit">
         </form>
       </div>
     </div>
     <div class="flex-30 padding-10px overflow-auto h-100">
-      <h2>active member</h2>
+      <h2>Active Member</h2>
       <ul>
         <?php
         if (mysqli_num_rows($result_active_member)) {
@@ -177,19 +176,19 @@
                     <input class="delete-button" type="submit" name="deleteMember" value=<?php echo $data['id']?>>
                   </form>
                 </div>
-                <div>expiry date <?php echo $data['expired_at']; ?> </div>
+                <div>Expiry Date <?php echo $data['expired_at']; ?> </div>
               </li>  
             <?php $sn++;
           }
         } else { ?>
             <tr>
-              <div colspan="8">no data found</div>
+              <div colspan="8">No data found</div>
             </tr>
         <?php } ?>
       </ul>
     </div>
     <div class="flex-30 padding-10px overflow-auto h-100">
-      <h2>expired member</h2>
+      <h2>Expired Member</h2>
         <ul>
           <?php
           if (mysqli_num_rows($result_inactive_member)) {
@@ -216,7 +215,7 @@
             }
           } else { ?>
               <tr>
-                <div colspan="8">no data found</div>
+                <div colspan="8">No data found</div>
               </tr>
           <?php } ?>
         </ul>

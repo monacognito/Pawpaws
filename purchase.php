@@ -1,5 +1,6 @@
 <?php
-
+  session_start();
+  
     // If not logged in redirect to login
     if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true)
     {
@@ -7,7 +8,7 @@
         exit;
     }
     
-    require_once 'config/database.php';
+    require_once 'controllers/connection.php';
 
     // Get items
     $query_all_items = "
@@ -93,7 +94,6 @@
         <a href="grooming.php" class="navbar-item">Grooming</a>
         <a href="purchase.php" class="navbar-item navbar-on">Purchase</a>
         <a href="membership.php" class="navbar-item">Membership</a>
-        <a href="debug.php" class="navbar-debug">Debug</a>
         <div class="h-20px flex-row mt-10px">
           <input class="pay-button" style="height:30px" type="submit" name="" value="0">
           <div>-input purchase</div>
@@ -107,7 +107,7 @@
   <div class="flex">
     <div class="flex-50 padding-10px center-child-horizontal flex-col">
       <?php echo $error; ?>
-      <h2>all items</h2>
+      <h2>All items</h2>
       <div class="container-items flex-col">
         <ul>
           <?php
@@ -126,13 +126,13 @@
                     </div>  
                     <div class="description"><?php echo $data['description']?></div>
                   </div>
-                  <div>IDR <?php echo $data['price']; ?> | (<?php echo $data['stock']; ?> in stock) </div>
+                  <div>IDR <?php echo $data['price']; ?> | (<?php echo $data['stock']; ?> In stock) </div>
                 </li>   
               <?php $sn++;
             }
           } else { ?>
               <tr>
-                <div colspan="8">no data found</div>
+                <div colspan="8">No data found</div>
               </tr>
           <?php } ?>
         </ul>
@@ -140,12 +140,12 @@
     </div>
     <div class="flex-50 padding-10px flex-col">
       <div class="flex-col">  
-        <div> <b>search item</b></div>
+        <div> <b>Search Item</b></div>
         <div>
           <form method="get" action="purchase.php">
             <div>
               <input type="text" placeholder="search here..." name="keyword" required="required" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"/>
-              <button name="search">search</button>
+              <button name="search">Search</button>
             </div>
           </form>
           </div>
@@ -181,7 +181,7 @@
             }
           } else { ?>
               <tr>
-                <div colspan="8">no data found</div>
+                <div colspan="8">No data found</div>
               </tr>
           <?php } ?>
         </ul>

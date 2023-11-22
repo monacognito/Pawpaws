@@ -2,7 +2,7 @@
 
     session_start();
 
-    require_once "controllers/AuthController.php";
+    //require_once "controllers/AuthController.php";
 
     if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true)
     {

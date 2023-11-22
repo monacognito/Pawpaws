@@ -110,7 +110,7 @@
     // Handle delete
     if (array_key_exists("deleteGrooming", $_POST))
     {
-        handleDeleteGrooming($_POST["deleteGrooming"], $link);
+        handleDeleteGrooming($_POST["deleteGrooming"], $conn);
     }
 
     function handleDeleteGrooming($id_delete, $conn_delete) 
@@ -165,7 +165,6 @@
         <a href="grooming.php" class="navbar-item navbar-on">Grooming</a>
         <a href="purchase.php" class="navbar-item">Purchase</a>
         <a href="membership.php" class="navbar-item">Membership</a>
-        <a href="debug.php" class="navbar-debug">Debug</a>
         <div class="h-20px flex-row mt-10px">
           <input class="delete-button" style="height:30px" type="submit" name="" value="0">
           <div>-delete</div>
@@ -183,22 +182,27 @@
       <div class="container-new-form">
         <?php echo $submit_result; ?>
         <?php echo $error; ?>
-        <form action="grooming.php" method ="post">
-          <h2>new grooming</h2>
-          <label>member_id</label>
-          <input class="block" type="number" name="member_id" maxlength="50" placeholder="10">
-          <label>price</label>
-          <input class="block" type="number" name="price" maxlength="50" placeholder="25000">
-          <label>time</label>
-          <input class="block" type="time" name="time" value="10:00">
-          <label>date</label>
-          <input class="block" type="date" name="date" value="<?php echo date('Y-m-d'); ?>">
-          <input type="submit" name="newGroomingSubmit" value="submit">
-        </form>
+        <form action="grooming.php" method="post">
+        <h2>New Grooming</h2>
+
+        <label for="member_id">ID</label>
+        <input class="block" type="number" id="member_id" name="member_id" maxlength="50" placeholder="10">
+        <br>
+        <label for="price">Price</label>
+        <input class="block" type="number" id="price" name="price" maxlength="50" placeholder="25000">
+        <br>
+        <label for="time">Time</label>
+        <input class="block" type="time" id="time" name="time" value="10:00">
+        <br>
+        <label for="date">Date</label>
+        <input class="block" type="date" id="date" name="date" value="<?php echo date('Y-m-d'); ?>">
+        <br>
+        <input type="submit" name="newGroomingSubmit" value="Submit">
+      </form>
       </div>
     </div>
     <div class="flex-40">
-      <h2>unpaid bookings</h2>
+      <h2>Unpaid Bookings</h2>
       <ul>
         <?php
         if (mysqli_num_rows($result_unpaid_groomings)) {
@@ -225,13 +229,13 @@
           }
         } else { ?>
             <tr>
-              <div colspan="8">no data found</div>
+              <div colspan="8">No data found</div>
             </tr>
         <?php } ?>
       </ul>
     </div>
     <div class="flex-40">
-      <h2>paid bookings</h2>
+      <h2>Paid bookings</h2>
       <ul>
         <?php
         if (mysqli_num_rows($result_paid_groomings)) {
@@ -253,7 +257,7 @@
           }
         } else { ?>
             <tr>
-              <div colspan="8">no data found</div>
+              <div colspan="8">No data found</div>
             </tr>
         <?php } ?>
       </ul>
