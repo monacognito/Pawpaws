@@ -84,7 +84,7 @@
     // Handle extend
     if (array_key_exists("extendMember", $_POST)) 
     {
-        handleExtendMember($_POST["extendMember"], $link);
+        handleExtendMember($_POST["extendMember"], $conn);
     }
 
     function handleExtendMember($id_extend, $conn_extend)
