@@ -10,7 +10,6 @@
 
 .navbar-row {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
@@ -20,41 +19,55 @@
   flex-direction: row;
 }
 
-.navbar-item {
-  display: inline;
+.navbar-item,
+.navbar-debug {
+  display: inline-block;
   padding: 0.5rem;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
+  margin: 0 0.5rem;
   text-align: center;
-  text-decoration: none; 
+  text-decoration: none;
+  cursor: pointer;
   color: blue;
-  cursor: default;
+  /* Default color for both items */
 }
 
 .navbar-debug {
-  display: inline;
-  padding: 0.5rem;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem;
-  text-align: center;
-  text-decoration: none; 
   color: rgb(119, 4, 56);
-  cursor: default;
 }
 
-.navbar-item:hover {
-  color: rgb(183, 106, 255);
-  cursor: pointer;
-}
-
+.navbar-item:hover,
 .navbar-debug:hover {
-  color: rgb(41, 2, 77);
-  cursor: pointer;
+  color: rgb(183, 106, 255);
 }
 
 .navbar-on {
   background-color: white;
-  border-top: 1px black solid;
-  border-right: 1px black solid;
-  border-left: 1px black solid;
+  border: 1px black solid;
+}
+
+
+.navbar-item {
+  color: blue;
+}
+
+.navbar-debug {
+  color: rgb(119, 4, 56);
+}
+
+.navbar-item:hover,
+.navbar-debug:hover {
+  cursor: pointer;
+}
+
+.navbar-item:hover {
+  color: rgb(183, 106, 255);
+}
+
+.navbar-debug:hover {
+  color: rgb(41, 2, 77);
+}
+
+.navbar-on {
+  background-color: white;
+  border: 1px black solid;
 }
