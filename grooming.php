@@ -1,5 +1,6 @@
 <?php
-    session_start();
+require_once(__DIR__."/helper/safe_mysqli_query.php");
+session_start();
 
     // if not logged in redirect to login
     if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)

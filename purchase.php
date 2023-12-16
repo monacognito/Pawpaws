@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__."/helper/safe_mysqli_query.php");
 session_start();
   
     // If not logged in redirect to login
