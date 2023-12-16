@@ -2,7 +2,7 @@
     session_start();
 
     // if not logged in redirect to login
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) 
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)
     {
         header("location: login.php");
         exit;
@@ -115,8 +115,8 @@
 
     function handleDeleteGrooming($id_delete, $conn_delete) 
     {
-        $query_delete_grooming = "delete from groomings where id=".$id_delete.";";
-        if (mysqli_query($conn_delete, $query_delete_grooming)) 
+        $query_delete_grooming = "delete from groomings where id = ?;";
+        if (safe_mysqli_query($conn_delete, $query_delete_grooming, "i", $id_delete))
         {
             header("location: grooming.php");
         } else 
