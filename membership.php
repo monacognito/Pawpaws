@@ -25,7 +25,7 @@
 
     if ($member_submit === "submit") 
     {
-        $name = $type = $gender = $owner_mobile = $address = $error = "";
+        $name = $type = $gender = $owner_mobile = $address = $error;
 
         // Check all
         $name = (empty(trim($_POST["name"])) ? "" : trim($_POST["name"]));
