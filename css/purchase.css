@@ -1,9 +1,12 @@
 .container-items {
-  padding: 0 1rem 0 0;
+  padding: 1rem;
   height: 60vh;
   width: 45vw;
   overflow: auto;
-  border: solid 1px black;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pay-button {
@@ -27,6 +30,11 @@
 }
 
 .description {
-  font-size: x-small;
+  font-size: 12px;
   color: darkslategray;
+}
+
+.pay-button:hover {
+  background: rgb(4, 76, 14);
+  color: transparent;
 }

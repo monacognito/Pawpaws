@@ -1,6 +1,27 @@
 .container-new-member {
-  border: solid 1px black;
+  border: 1px solid black;
   padding: 0 2rem 2rem 2rem;
+  border-radius: 5px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form input[type="submit"] {
+  margin-top: 1px;
+}
+
+form {
+  text-align: center;
+}
+
+form input[type="submit"] {
+  display: inline-block;
 }
 
 h2 {
@@ -22,7 +43,7 @@ form {
   font-size: 14px;
   border:none;
   background: rgb(255, 0, 0);
-  color: rgb(255, 0, 0);
+  color: transparent;
   width: 30px;
   height:auto;
   outline: none;
@@ -37,7 +58,7 @@ form {
   font-size: 14px;
   border:none;
   background: rgb(0, 255, 26);
-  color: rgb(0, 255, 26);
+  color: transparent;
   width: 30px;
   height:auto;
   outline: none;
@@ -45,4 +66,20 @@ form {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px; 
+}
+
+.delete-button {
+  background: #ff0000;
+}
+
+.extend-button {
+  background: #00ff1a;
+}
+
+.delete-button:hover {
+  background-color: #9c2727;
+}
+
+.extend-button:hover {
+  background: #044c0e;
 }
