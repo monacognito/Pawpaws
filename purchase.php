@@ -1,5 +1,5 @@
 <?php
-  session_start();
+session_start();
   
     // If not logged in redirect to login
     if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)
@@ -11,35 +11,30 @@
     require_once 'controllers/connection.php';
 
     // Get items
-    $query_all_items = "
-    select *
-    from items
-    order by name;
-    ";
-
-    $result_all_items = mysqli_query($conn, $query_all_items);
+    $query_all_items = "select * from items order by name;";
+    $result_all_items = $safe_mysqli_query($conn, $query_all_items, NULL);
 
     $error = "";
 
     // Buy item
     if (array_key_exists("buyItem", $_POST))
     {
-        $amount = (empty(trim($_POST["buyAmount"]))? 0: trim($_POST["buyAmount"])); 
+        $amount = (empty(trim($_POST["buyAmount"])) ? 0 : trim($_POST["buyAmount"]));
         $error = handleBuyItem($_POST["buyItem"], $amount, $conn);
     }
 
     function handleBuyItem($id_buy, $amount_buy, $conn_buy)
     {
-        $query_validate_stock = "select stock from items where id=".$id_buy.";";
-        if ($result_stock = mysqli_query($conn_buy, $query_validate_stock)) 
+        $query_validate_stock = "select stock from items where id = ?;";
+        if ($result_stock = safe_mysqli_query($conn_buy, $query_validate_stock, "i", $id_buy))
         {
-            if (mysqli_fetch_assoc($result_stock)["stock"] < $amount_buy) 
+            if ($result_stock->fetch_assoc()["stock"] < $amount_buy)
             {
                 return "unavailable stock";
             }
 
-            $query_buy_item = "update items set stock = stock - ".$amount_buy." where id=".$id_buy.";";
-            if (mysqli_query($conn_buy, $query_buy_item))
+            $query_buy_item = "update items set stock = stock - ? where id = ?;";
+            if (safe_mysqli_query($conn_buy, $query_buy_item, "ii", $amount_buy))
             {
                 header("Refresh:0");
                 return "";
