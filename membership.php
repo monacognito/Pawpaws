@@ -15,8 +15,8 @@
                             where expired_at >= now();";
     $query_inactive_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
                             where expired_at < now();";
-    $result_active_member = mysqli_query($conn, $query_active_member);
-    $result_inactive_member = mysqli_query($conn, $query_inactive_member);
+    $result_active_member = safe_mysqli_query($conn, $query_active_member, NULL);
+    $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member, NULL);
 
     // New member form
     $member_submit = isset($_POST["newMemberSubmit"]) ? $_POST["newMemberSubmit"] : '';
@@ -42,16 +42,8 @@
         // All valid
         if (empty($error))
         {
-            $query_new_member = "insert into members value ("
-            . "default,\""
-            . $name . "\",\""
-            . $type . "\",\""
-            . $gender . "\",\""
-            . $owner_mobile . "\",\""
-            . $address . "\","
-            . "default,"
-            . "default);";
-            if (mysqli_query($conn, $query_new_member)) 
+            $query_new_member = "insert into members value (default, ?, ?, ?, ?, ?, default, default);";
+            if (safe_mysqli_query($conn, $query_new_member, "sssss", $name, $type, $gender, $owner_mobile, $address))
             {
                 $submit_result = "Success adding member named " . $name;
                 header("location: membership.php");
@@ -71,8 +63,8 @@
 
     function handleDeleteMember($id_delete, $conn_delete)
     {
-        $query_delete_member = "delete from members where id=".$id_delete.";";
-        if (mysqli_query($conn_delete, $query_delete_member))
+        $query_delete_member = "delete from members where id = ?;";
+        if (safe_mysqli_query($conn_delete, $query_delete_member, "i", $id_delete))
         {
             header("location: membership.php");
         } else
@@ -89,8 +81,8 @@
 
     function handleExtendMember($id_extend, $conn_extend)
     {
-        $query_extend_member = "update members set expired_at = date_add(now(), interval 6 month) where id=".$id_extend.";";
-        if (mysqli_query($conn_extend, $query_extend_member)) 
+        $query_extend_member = "update members set expired_at = date_add(now(), interval 6 month) where id = ?;";
+        if (safe_mysqli_query($conn_extend, $query_extend_member, "i", $id_extend))
         {
             header("location: membership.php");
         } else 
