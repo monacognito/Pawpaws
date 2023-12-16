@@ -47,8 +47,8 @@
     order by date asc, time asc;
     ";
 
-    $result_unpaid_groomings = mysqli_query($conn, $query_unpaid_groomings);
-    $result_paid_groomings = mysqli_query($conn, $query_paid_groomings);
+    $result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings, NULL);
+    $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings, NULL);
 
     $new_submit = isset($_POST["newGroomingSubmit"]) ? $_POST["newGroomingSubmit"] : '';
     $submit_result = "";
@@ -74,20 +74,13 @@
     if (empty($error))
     {
         // Check member_id
-        $query_member_id_check = "select id from members where id = ".$member_id." and expired_at >= now();";
-        if ($result_member_id_check = mysqli_query($conn, $query_member_id_check)) {
+        $query_member_id_check = "select id from members where id = ? and expired_at >= now();";
+        if ($result_member_id_check = safe_mysqli_query($conn, $query_member_id_check, "i", $member_id)) {
         if (mysqli_num_rows($result_member_id_check))
         {
-            $query_new_grooming = "insert into groomings value ("
-            . "default,\""
-            . $member_id . "\","
-            . "default,\""
-            . $date . "\",\""
-            . $time . "\",\""
-            . $price . "\","
-            . $paid . ");";
+            $query_new_grooming = "insert into groomings value (default, ?, default, ?, ?, ?, ?);";
 
-            if (mysqli_query($link, $query_new_grooming))
+            if (safe_mysqli_query($conn, $query_new_grooming, "iisii", $member_id, $date, $time, $price, $paid))
             {
                 $submit_result = "Success adding groom for " . $member_id;
                 header("location: grooming.php");
@@ -131,16 +124,16 @@
         handlePayGrooming($_POST["payGrooming"], $conn);
     }
 
-    function handlePayGrooming($id_pay, $link_pay) 
+    function handlePayGrooming($id_pay, $conn_pay)
     {
-        $query_extend_member = "update groomings set is_paid = true where id=".$id_pay.";";
-    if (mysqli_query($link_pay, $query_extend_member))
-    {
-        header("location: grooming.php");
-    } else 
-    {
-        $error = "cannot pay"; 
-    }
+        $query_extend_member = "update groomings set is_paid = true where id = ?;";
+        if (safe_mysqli_query($conn_pay, $query_extend_member, "i", $id_pay))
+        {
+            header("location: grooming.php");
+        } else
+        {
+            $error = "cannot pay";
+        }
     } 
 ?>
 
