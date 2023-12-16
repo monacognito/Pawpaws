@@ -47,9 +47,8 @@
     order by p.created_at desc;
     ";
 
-
-    $result_today_groomings = mysqli_query($conn, $query_today_groomings);
-    $result_purchases_history = mysqli_query($conn, $query_purchases_history);
+    $result_today_groomings = safe_mysqli_query($conn, $query_today_groomings, NULL);
+    $result_purchases_history = safe_mysqli_query($conn, $query_purchases_history, NULL);
     $error = "";
 
 ?>
