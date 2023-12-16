@@ -37,7 +37,7 @@
         } 
         else 
         {
-            $password = trim($_POST["password"]);
+            $password = $_POST["password"];
         }
 
         //When there is no error
