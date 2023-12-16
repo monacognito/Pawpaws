@@ -13,7 +13,7 @@ session_start();
 
     // Get items
     $query_all_items = "select * from items order by name;";
-    $result_all_items = $safe_mysqli_query($conn, $query_all_items, NULL);
+    $result_all_items = safe_mysqli_query($conn, $query_all_items, NULL);
 
     $error = "";
 
