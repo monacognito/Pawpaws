@@ -54,18 +54,19 @@ session_start();
         $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
 
         $search_string = "select * from items where ";
-        $keywords_all = "";
+        $keywords_all = array();
+        $bind_str = "";
                     
         $search_keywords = explode(' ', $keyword);			
         foreach ($search_keywords as $word)
         {
-            $search_string .= "name like '%".$word."%' or ";
-            $keywords_all .= $word.' ';
+            $search_string .= "name like '?' or ";
+            $keywords_all[] = $word;
+            $bind_str .= "s";
         }
-        
+
         $search_string = substr($search_string, 0, strlen($search_string)-4);
-        $keywords_all = substr($keywords_all, 0, strlen($keywords_all)-1);
-        $result_search = mysqli_query($conn, $search_string);
+        $result_search = safe_mysqli_query($conn, $search_string, str_repeat("s", count($search_keywords)), ...$keywords_all);
         $result_search_count = mysqli_num_rows($result_search);
     }
 ?>
