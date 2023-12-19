@@ -148,8 +148,8 @@ session_start();
           </div>
       </div>
       <div>
-        <?php if (!empty($keywords_all)) {
-          echo "results for ".$keywords_all;
+        <?php if (!empty($keyword)) {
+          echo "results for \"" . $keyword . "\"";
         } else echo "result will be displayed below";
         
       ?>
