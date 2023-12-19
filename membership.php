@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__."/controllers/connection.php");
+require_once(__DIR__."/helper/member_actions.php");
 require_once(__DIR__."/helper/safe_mysqli_query.php");
 session_start();
 
@@ -8,89 +10,36 @@ session_start();
         header("location: login.php");
         exit;
     }
-
-    require_once 'controllers/connection.php';
+// if not logged in redirect to login
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
 
     // Get members 
-    $query_active_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
-                            where expired_at >= now();";
-    $query_inactive_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
-                            where expired_at < now();";
-    $result_active_member = safe_mysqli_query($conn, $query_active_member);
-    $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
+$query_active_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
+                        where expired_at >= now();";
+$query_inactive_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
+                        where expired_at < now();";
+$result_active_member = safe_mysqli_query($conn, $query_active_member);
+$result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
 
-    // New member form
-    $member_submit = isset($_POST["newMemberSubmit"]) ? $_POST["newMemberSubmit"] : '';
-    $submit_result = "";
-    $error = "";
-
-    if ($member_submit === "submit") 
-    {
-        $name = $type = $gender = $owner_mobile = $address = $error;
-
-        // Check all
-        $name = (empty(trim($_POST["name"])) ? "" : trim($_POST["name"]));
-        $error = (empty(trim($_POST["name"])) ? "Name cannot be empty" : "");
-        $type = (empty(trim($_POST["type"])) ? "" : trim($_POST["type"]));
-        $error = (empty(trim($_POST["type"])) ? "Breed cannot be empty" : "");
-        $gender = (isset($_POST["gender"]) ? (empty(trim($_POST["gender"])) ? "" : trim($_POST["gender"])) : "");
-        $error = isset($_POST["gender"]) ? (empty(trim($_POST["gender"])) ? "Gender cannot be empty" : "") : "Gender cannot be empty";
-        $owner_mobile = (empty(trim($_POST["owner_mobile"])) ? "" : trim($_POST["owner_mobile"]));
-        $error = (empty(trim($_POST["owner_mobile"])) ? "Mobile cannot be empty" : "");
-        $address = (empty(trim($_POST["address"])) ? "" : trim($_POST["address"]));
-        $error = (empty(trim($_POST["address"])) ? "Address cannot be empty" : "");
-
-        // All valid
-        if (empty($error))
-        {
-            $query_new_member = "insert into members value (default, ?, ?, ?, ?, ?, default, default);";
-            if (safe_mysqli_query($conn, $query_new_member, "sssss", [$name, $type, $gender, $owner_mobile, $address]))
-            {
-                $submit_result = "Success adding member named " . $name;
-                header("location: membership.php");
-            } else
-            {
-                $submit_result = "An error occured.";
-            }
-            
-        }
+// New member form
+$result = NULL;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Create member
+    if (isset($_POST["newMemberSubmit"]) && $_POST["newMemberSubmit"] === "submit") {
+        $result = createMember($conn);
     }
-
-    // Handle delete
-    if (array_key_exists("deleteMember", $_POST))
-    {
-        handleDeleteMember($_POST["deleteMember"], $conn);
+    // Delete member
+    if (isset($_POST["deleteMember"])) {
+        $result = deleteMember($_POST["deleteMember"], $conn);
     }
-
-    function handleDeleteMember($id_delete, $conn_delete)
-    {
-        $query_delete_member = "delete from members where id = ?;";
-        if (safe_mysqli_query($conn_delete, $query_delete_member, "i", [$id_delete], false))
-        {
-            header("location: membership.php");
-        } else
-        {
-            $error = "Cannot delete";
-        }
+    // Mark member paid
+    if (isset($_POST["markMemberPaid"])) {
+        $result = markMemberPaid($_POST["markMemberPaid"], $conn);
     }
-
-    // Handle extend
-    if (array_key_exists("extendMember", $_POST)) 
-    {
-        handleExtendMember($_POST["extendMember"], $conn);
-    }
-
-    function handleExtendMember($id_extend, $conn_extend)
-    {
-        $query_extend_member = "update members set expired_at = date_add(now(), interval 6 month) where id = ?;";
-        if (safe_mysqli_query($conn_extend, $query_extend_member, "i", [$id_extend], false))
-        {
-            header("location: membership.php");
-        } else 
-        {
-            $error = "Cannot extend"; 
-        }
-    } 
+}
 
 ?>
 
