@@ -74,15 +74,16 @@ ul {
   outline: none;
   cursor: pointer;
   border-radius: 5px;
-  color: transparent;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .delete-button {
+  color: white !important;
   background: #ff0000;
 }
 
 .pay-button {
+  color: black !important;
   background: #00ff1a;
 }
 
