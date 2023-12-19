@@ -9,19 +9,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-// Get items
-$query_all_items = "select * from items order by name;";
-$result_all_items = safe_mysqli_query($conn, $query_all_items);
-
-$error = NULL;
-
-// Buy item
-if (array_key_exists("buyItem", $_POST)) {
-    $amount = (empty(trim($_POST["buyAmount"])) ? 0 : trim($_POST["buyAmount"]));
-    $error = handleBuyItem($_POST["buyItem"], $amount, $conn);
-}
-
-function handleBuyItem($id_buy, $amount_buy, $conn_buy)
+function buyItem($id_buy, $amount_buy, $conn_buy)
 {
     $query_validate_stock = "select stock from items where id = ?;";
     if ($result_stock = safe_mysqli_query($conn_buy, $query_validate_stock, "i", [$id_buy])) {
@@ -38,6 +26,21 @@ function handleBuyItem($id_buy, $amount_buy, $conn_buy)
         return "sql error";
     } else
         return "sql error";
+}
+
+// Get items
+$query_all_items = "select * from items order by name;";
+$result_all_items = safe_mysqli_query($conn, $query_all_items);
+
+$error = NULL;
+
+// Buy item
+if (array_key_exists("buyItem", $_POST)) {
+    $amount = trim($_POST["buyAmount"]);
+    if (empty($amount) || !is_numeric($amount)) {
+        $error = "Amount must be numerical";
+    }
+    $error = buyItem($_POST["buyItem"], $amount, $conn);
 }
 
 $result_search_count = 0;
