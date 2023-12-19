@@ -1,12 +1,11 @@
 <?php
-require_once(__DIR__."/helper/safe_mysqli_query.php");
-require_once(__DIR__."/helper/grooming_actions.php");
-require_once(__DIR__."/controllers/connection.php");
+require_once(__DIR__ . "/helper/safe_mysqli_query.php");
+require_once(__DIR__ . "/helper/grooming_actions.php");
+require_once(__DIR__ . "/controllers/connection.php");
 session_start();
 
 // if not logged in redirect to login
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)
-{
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
@@ -67,18 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/navbar.css">
-  <link rel="stylesheet" href="./css/main.css">
-  <link rel="stylesheet" href="./css/grooming.css">
-  
-  <title>Grooming</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
