@@ -1,141 +1,131 @@
 <?php
 require_once(__DIR__."/helper/safe_mysqli_query.php");
+require_once(__DIR__."/controllers/connection.php");
 session_start();
 
-    // if not logged in redirect to login
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)
-    {
-        header("location: login.php");
-        exit;
+// if not logged in redirect to login
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true)
+{
+    header("location: login.php");
+    exit;
+}
+
+function submitGrooming($conn)
+{
+
+    $member_id = trim($_POST["member_id"]);
+    $price = trim($_POST["price"]);
+    $date = trim($_POST["date"]);
+    $time = trim($_POST["time"]);
+
+    // Sanity check
+    if (empty($member_id) || !is_numeric($member_id) ||
+        empty($price) || !is_numeric($price) ||
+        empty($date) ||
+        empty($time)) {
+        echo "<script type='text/javascript'>alert('Data cannot be empty');</script>";
+        echo "<meta http-equiv='refresh' content='0'>";
     }
 
-    require_once 'controllers/connection.php';
-
-    // Get groomings
-    $query_unpaid_groomings = "
-    select
-        g.id groom_id,
-        m.id member_id, 
-        m.name as name,
-        m.type as type,
-        m.gender as gender,
-        m.owner_mobile as mobile,
-        g.groom_date as date,
-        g.groom_time as time,
-        g.price
-    from groomings g
-    join members m
-        on g.member_id = m.id
-    where is_paid = false
-    order by date asc, time asc;
-    ";
-
-    $query_paid_groomings = "
-    select
-        g.id groom_id,
-        m.id member_id, 
-        m.name as name,
-        m.type as type,
-        m.gender as gender,
-        m.owner_mobile as mobile,
-        g.groom_date as date,
-        g.groom_time as time,
-        g.price
-    from groomings g
-    join members m
-        on g.member_id = m.id
-    where is_paid = true
-    order by date asc, time asc;
-    ";
-
-    $result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings, NULL);
-    $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings, NULL);
-
-    $new_submit = isset($_POST["newGroomingSubmit"]) ? $_POST["newGroomingSubmit"] : '';
-    $submit_result = "";
-    $error = "";
-
-    if ($new_submit === "submit") {
-    $member_id = $date = $time = $price = $paid =  "";
-
-    // Check all
-    $member_id = (empty(trim($_POST["member_id"])) ? "" : trim($_POST["member_id"]));
-    $error = (empty(trim($_POST["member_id"])) ? "member_id cannot be empty" : "");
-    $date = (empty(trim($_POST["date"])) ? "" : trim($_POST["date"]));
-    $error = (empty(trim($_POST["date"])) ? "date cannot be empty" : "");
-    $time = (empty(trim($_POST["time"])) ? "" : trim($_POST["time"]));
-    $error = (empty(trim($_POST["time"])) ? "time cannot be empty" : "");
-    $price = (empty(trim($_POST["price"])) ? "" : trim($_POST["price"]));
-    $error = (empty(trim($_POST["price"])) ? "price cannot be empty" : "");
-
-    // Payment status
-    $paid = (empty($_POST["paid"]) ? "false" : trim($_POST["paid"]));
-
-    // All valid
-    if (empty($error))
-    {
-        // Check member_id
-        $query_member_id_check = "select id from members where id = ? and expired_at >= now();";
-        if ($result_member_id_check = safe_mysqli_query($conn, $query_member_id_check, "i", $member_id)) {
-        if (mysqli_num_rows($result_member_id_check))
-        {
-            $query_new_grooming = "insert into groomings value (default, ?, default, ?, ?, ?, ?);";
-
-            if (safe_mysqli_query($conn, $query_new_grooming, "iisii", $member_id, $date, $time, $price, $paid))
-            {
-                $submit_result = "Success adding groom for " . $member_id;
-                header("location: grooming.php");
-            } else
-            {
-                $submit_result = "An error occured.";
-            }
-        } else 
-        {
-            // Invalid id or inactive
-            $submit_result = "please enter correct id and make sure membership is active"; 
+    // Check member_id
+    $query_member_id_check = "select id from members where id = ? and expired_at >= now();";
+    $result_member_id_check = safe_mysqli_query($conn, $query_member_id_check, "i", [$member_id]);
+    if (mysqli_num_rows($result_member_id_check)) {
+        $query_new_grooming = "insert into groomings value (default, ?, default, ?, ?, ?, ?);";
+        if (safe_mysqli_query($conn, $query_new_grooming, "issii", [$member_id, $date, $time, $price, 0], false)) {
+            $result = "Submission successful for ID " . $member_id;
+        } else {
+            $result = "Unknown database error occurred";
         }
-        }
-    } else 
-    {
-        $submit_result = "sql error.";
+    } else {
+        $result = "Invalid ID. Make sure membership status is active";
     }
+
+    echo "<script type='text/javascript'>alert('$result');</script>";
+    echo "<meta http-equiv='refresh' content='0'>";
+}
+
+function payGrooming($id_pay, $conn_pay)
+{
+    $query_extend_member = "update groomings set is_paid = true where id = ?;";
+    if (safe_mysqli_query($conn_pay, $query_extend_member, "i", [$id_pay], false)) {
+        $result = "Payment successful";
+        echo "<meta http-equiv='refresh' content='0'>";
+    } else {
+        $result = "Cannot pay";
+    }
+
+    echo "<script type='text/javascript'>alert('$result');</script>";
+    echo "<meta http-equiv='refresh' content='0'>";
+}
+
+function deleteGrooming($id_delete, $conn_delete)
+{
+    $query_delete_grooming = "delete from groomings where id = ?;";
+    if (safe_mysqli_query($conn_delete, $query_delete_grooming, "i", [$id_delete], false)) {
+        $result = "Deletion successful";
+    } else {
+        $result = "cannot delete";
+    }
+
+    echo "<script type='text/javascript'>alert('$result');</script>";
+    echo "<meta http-equiv='refresh' content='0'>";
+}
+
+// Get groomings
+$query_unpaid_groomings = "
+select
+    g.id as groom_id,
+    m.id as member_id, 
+    m.name as name,
+    m.type as type,
+    m.gender as gender,
+    m.owner_mobile as mobile,
+    g.groom_date as date,
+    g.groom_time as time,
+    g.price as price
+from groomings g
+join members m
+    on g.member_id = m.id
+where is_paid = false
+order by date asc, time asc;";
+
+$query_paid_groomings = "
+select
+    g.id groom_id,
+    m.id member_id, 
+    m.name as name,
+    m.type as type,
+    m.gender as gender,
+    m.owner_mobile as mobile,
+    g.groom_date as date,
+    g.groom_time as time,
+    g.price as price
+from groomings g
+join members m
+    on g.member_id = m.id
+where is_paid = true
+order by date asc, time asc;";
+
+$result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings);
+$result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
+$result = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST["newGroomingSubmit"]) && $_POST["newGroomingSubmit"] === "Submit") {
+        submitGrooming($conn);
     }
 
     // Handle delete
-    if (array_key_exists("deleteGrooming", $_POST))
-    {
-        handleDeleteGrooming($_POST["deleteGrooming"], $conn);
-    }
-
-    function handleDeleteGrooming($id_delete, $conn_delete) 
-    {
-        $query_delete_grooming = "delete from groomings where id = ?;";
-        if (safe_mysqli_query($conn_delete, $query_delete_grooming, "i", $id_delete))
-        {
-            header("location: grooming.php");
-        } else 
-        {
-            $error = "cannot delete";
-        }
+    if (isset($_POST["deleteGrooming"])) {
+        deleteGrooming($_POST["deleteGrooming"], $conn);
     }
 
     // Handle pay
-    if (array_key_exists("payGrooming", $_POST))
-    {
-        handlePayGrooming($_POST["payGrooming"], $conn);
+    if (isset($_POST["payGrooming"])) {
+        payGrooming($_POST["payGrooming"], $conn);
     }
-
-    function handlePayGrooming($id_pay, $conn_pay)
-    {
-        $query_extend_member = "update groomings set is_paid = true where id = ?;";
-        if (safe_mysqli_query($conn_pay, $query_extend_member, "i", $id_pay))
-        {
-            header("location: grooming.php");
-        } else
-        {
-            $error = "cannot pay";
-        }
-    } 
+}
 ?>
 
 
@@ -159,14 +149,6 @@ session_start();
         <a href="grooming.php" class="navbar-item navbar-on">Grooming</a>
         <a href="purchase.php" class="navbar-item">Purchase</a>
         <a href="membership.php" class="navbar-item">Membership</a>
-        <div class="h-20px flex-row mt-10px">
-          <input class="delete-button" style="height:30px" type="submit" name="" value="0">
-          <div>-delete</div>
-        </div>
-        <div class="h-20px flex-row mt-10px">
-          <input class="pay-button" style="height:30px" type="submit" name="" value="0">
-          <div>-mark as paid</div>
-        </div>
       </div>
       <a href="logout.php" class="navbar-item">Logout</a>
     </div>
@@ -174,25 +156,23 @@ session_start();
   <div class="flex">
     <div class="flex-20 padding-10px center-child-horizontal">
       <div class="container-new-form">
-        <?php echo $submit_result; ?>
-        <?php echo $error; ?>
+        <?php echo $result; ?>
         <form action="grooming.php" method="post">
-        <h2>New Grooming</h2>
-
-        <label for="member_id">ID</label>
-        <input class="block" type="number" id="member_id" name="member_id" maxlength="50" placeholder="10">
-        <br>
-        <label for="price">Price</label>
-        <input class="block" type="number" id="price" name="price" maxlength="50" placeholder="25000">
-        <br>
-        <label for="time">Time</label>
-        <input class="block" type="time" id="time" name="time" value="10:00">
-        <br>
-        <label for="date">Date</label>
-        <input class="block" type="date" id="date" name="date" value="<?php echo date('Y-m-d'); ?>">
-        <br>
-        <input type="submit" name="newGroomingSubmit" value="Submit">
-      </form>
+            <h2>New Grooming</h2>
+            <label for="member_id">ID</label>
+            <input class="block" type="number" id="member_id" name="member_id" maxlength="50" placeholder="10">
+            <br>
+            <label for="price">Price</label>
+            <input class="block" type="number" id="price" name="price" maxlength="50" placeholder="25000">
+            <br>
+            <label for="time">Time</label>
+            <input class="block" type="time" id="time" name="time" value="10:00">
+            <br>
+            <label for="date">Date</label>
+            <input class="block" type="date" id="date" name="date" value="<?php echo date('Y-m-d'); ?>">
+            <br>
+            <input type="submit" name="newGroomingSubmit" value="Submit">`
+        </form>
       </div>
     </div>
     <div class="flex-40">
@@ -210,10 +190,12 @@ session_start();
                   </div>
                   <div>  
                     <form method="post" style="display:inline;">
-                      <input class="delete-button" type="submit" name="deleteGrooming" value=<?php echo $data['groom_id']?>>
+                      <input class="delete-button" type="submit" name="deleteGrooming" value="Delete">
+                      <input type="hidden" name="deleteGrooming" value=<?php echo $data['groom_id']?>>
                     </form>
                     <form method="post" style="display:inline;">
-                      <input class="pay-button" type="submit" name="payGrooming" value=<?php echo $data['groom_id']?>>
+                      <input class="pay-button" type="submit" name="payGrooming" value="Pay">
+                      <input type="hidden" name="payGrooming" value=<?php echo $data['groom_id']?>>
                     </form>
                   </div>
                 </div>
