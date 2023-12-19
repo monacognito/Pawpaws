@@ -45,9 +45,14 @@ if (array_key_exists("buyItem", $_POST)) {
 
 $result_search_count = 0;
 $keywords_all = "";
+$error_search = NULL;
 // search item
 if (isset($_GET['search'])) {
-    $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
+    // Sanity check & validation
+    $keyword = htmlspecialchars(trim($_GET["keyword"]));
+    if (empty($keyword)) {
+        $error_search = "ERROR: Search input cannot be empty";
+    }
 
     $search_string = "select * from items where ";
     $keywords_all = array();
@@ -143,10 +148,13 @@ if (isset($_GET['search'])) {
                 </div>
             </div>
             <div>
-                <?php if (!empty($keyword)) {
+                <?php if (!empty($error_search)) {
+                    echo $error_search;
+                } else if (!empty($keyword)) {
                     echo "results for \"" . $keyword . "\"";
-                } else echo "result will be displayed below";
-
+                } else {
+                    echo "result will be displayed below";
+                }
                 ?>
             </div>
             <div class="container-items flex-col">
