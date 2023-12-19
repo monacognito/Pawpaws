@@ -54,86 +54,87 @@ $error = "";
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/navbar.css">
-  <link rel="stylesheet" href="./css/main.css">
-  <link rel="stylesheet" href="./css/dashboard.css">
-  <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/navbar.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <title>Dashboard</title>
 </head>
 <body>
-  <div class="navbar-container">
+<div class="navbar-container">
     <div class="navbar-row">
-      <div class="navbar-left cg-10px">
-        <a href="dashboard.php" class="navbar-item navbar-on">Dashboard</a>
-        <a href="grooming.php" class="navbar-item">Grooming</a>
-        <a href="purchase.php" class="navbar-item">Purchase</a>
-        <a href="membership.php" class="navbar-item">Membership</a>
-      </div>
-      <a href="logout.php" class="navbar-item">Logout</a>
+        <div class="navbar-left cg-10px">
+            <a href="dashboard.php" class="navbar-item navbar-on">Dashboard</a>
+            <a href="grooming.php" class="navbar-item">Grooming</a>
+            <a href="purchase.php" class="navbar-item">Purchase</a>
+            <a href="membership.php" class="navbar-item">Membership</a>
+        </div>
+        <a href="logout.php" class="navbar-item">Logout</a>
     </div>
-  </div>
-  <div class="flex body-container">
+</div>
+<div class="flex body-container">
     <?php echo $error; ?>
     <div class="flex-40">
-      <h2>Purchases History</h2>
-      <div class="container-items flex-col overflow-auto h-100">
-        <ul>
-          <?php
-          if (mysqli_num_rows($result_purchases_history)) {
-            $sn = 1;
-            while ($data = mysqli_fetch_assoc($result_purchases_history)) {
-              ?>
-                <li>
-                  <div><?php echo $data['created_at']; ?></div>
-                  <div>
-                    <b><?php echo $data['name']; ?></b> - <?php echo $data['amount']; ?> pcs </div>
-                  <div>IDR <?php echo $data['total']; ?> </div>
-                </li>  
-              <?php $sn++;
-            }
-          } else { ?>
-              <tr>
-                <div colspan="8">No data found</div>
-              </tr>
-          <?php } ?>
-        </ul>
-      </div>
+        <h2>Purchases History</h2>
+        <div class="container-items flex-col overflow-auto h-100">
+            <ul>
+                <?php
+                if (mysqli_num_rows($result_purchases_history)) {
+                    $sn = 1;
+                    while ($data = mysqli_fetch_assoc($result_purchases_history)) {
+                        ?>
+                        <li>
+                            <div><?php echo $data['created_at']; ?></div>
+                            <div>
+                                <b><?php echo $data['name']; ?></b> - <?php echo $data['amount']; ?> pcs
+                            </div>
+                            <div>IDR <?php echo $data['total']; ?> </div>
+                        </li>
+                        <?php $sn++;
+                    }
+                } else { ?>
+                    <tr>
+                        <div colspan="8">No data found</div>
+                    </tr>
+                <?php } ?>
+            </ul>
+        </div>
     </div>
     <div class="flex-30">
-      <h2>Today's groomings</h2>
-      <div class="container-items flex-col overflow-auto h-100">
-        <ul>
-          <?php
-          if (mysqli_num_rows($result_today_groomings)) {
-            $sn = 1;
-            while ($data = mysqli_fetch_assoc($result_today_groomings)) {
-              ?>
-                <li>
-                  <div>Scheduled at <?php echo $data['time']; ?></div>
-                  <div>(ID: <?php echo $data['groom_id']; ?>)
-                    <b><?php echo $data['name']; ?></b> - <?php echo $data['type']; ?> 
-                  </div>
-                  <?php
-                    if ($data['is_paid'] == true) {
-                      echo "<div>paid</div>";
-                    } else {
-                      echo "<div><b>unpaid IDR ".$data['price']."</b></div>";
+        <h2>Today's groomings</h2>
+        <div class="container-items flex-col overflow-auto h-100">
+            <ul>
+                <?php
+                if (mysqli_num_rows($result_today_groomings)) {
+                    $sn = 1;
+                    while ($data = mysqli_fetch_assoc($result_today_groomings)) {
+                        ?>
+                        <li>
+                            <div>Scheduled at <?php echo $data['time']; ?></div>
+                            <div>(ID: <?php echo $data['groom_id']; ?>)
+                                <b><?php echo $data['name']; ?></b> - <?php echo $data['type']; ?>
+                            </div>
+                            <?php
+                            if ($data['is_paid'] == true) {
+                                echo "<div>paid</div>";
+                            } else {
+                                echo "<div><b>unpaid IDR " . $data['price'] . "</b></div>";
+                            }
+                            echo "<div>phone (+62) " . $data['mobile'] . "</div>"
+                            ?>
+                        </li>
+                        <?php $sn++;
                     }
-                    echo "<div>phone (+62) ".$data['mobile']."</div>"
-                  ?>
-                </li>  
-              <?php $sn++;
-            }
-          } else { ?>
-              <tr>
-                <div colspan="8">No data found</div>
-              </tr>
-          <?php } ?>
-        </ul>
-      </div>
+                } else { ?>
+                    <tr>
+                        <div colspan="8">No data found</div>
+                    </tr>
+                <?php } ?>
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
 </body>
 </html>
