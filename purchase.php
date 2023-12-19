@@ -38,7 +38,7 @@ session_start();
             if (safe_mysqli_query($conn_buy, $query_buy_item, "ii", [$amount_buy, $id_buy], false))
             {
                 header("Refresh:0");
-                return "";
+                return null;
             }
 
             return "sql error";
@@ -46,7 +46,6 @@ session_start();
         return "sql error";
     }
 
-    $result_search = "";
     $result_search_count = 0;
     $keywords_all = "";
     // search item
@@ -56,14 +55,12 @@ session_start();
 
         $search_string = "select * from items where ";
         $keywords_all = array();
-        $bind_str = "";
                     
         $search_keywords = explode(' ', $keyword);			
         foreach ($search_keywords as $word)
         {
             $search_string .= "name like '?' or ";
             $keywords_all[] = $word;
-            $bind_str .= "s";
         }
 
         $search_string = substr($search_string, 0, strlen($search_string)-4);
