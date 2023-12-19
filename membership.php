@@ -56,14 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <a href="grooming.php" class="navbar-item">Grooming</a>
             <a href="purchase.php" class="navbar-item">Purchase</a>
             <a href="membership.php" class="navbar-item navbar-on">Membership</a>
-            <div class="h-20px flex-row mt-10px">
-                <input class="delete-button" style="height:30px" type="submit" name="" value="0">
-                <div>-delete</div>
-            </div>
-            <div class="h-20px flex-row mt-10px">
-                <input class="extend-button" style="height:30px" type="submit" name="" value="0">
-                <div>-mark as paid</div>
-            </div>
         </div>
         <a href="logout.php" class="navbar-item">Logout</a>
     </div>
