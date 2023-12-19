@@ -6,6 +6,13 @@ body {
   flex-direction: column;
   color: white;
   background: linear-gradient(90deg, #ffffff 0%, #9ea8bb 100%);
+  margin: 0;
+}
+
+.container {
+  border: 2px solid white;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 h2 {
@@ -14,5 +21,32 @@ h2 {
 
 input {
   display: block;
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #3498db; /* You can adjust the border color as needed */
+  border-radius: 6px;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+  }
 }
 
+button {
+  margin: 15px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  &:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+  }
+}
