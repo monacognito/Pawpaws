@@ -59,7 +59,7 @@ session_start();
         $search_keywords = explode(' ', $keyword);			
         foreach ($search_keywords as $word)
         {
-            $search_string .= "name like '?' or ";
+            $search_string .= "name like ? or ";
             $keywords_all[] = $word;
         }
 
