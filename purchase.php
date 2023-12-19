@@ -13,7 +13,7 @@ session_start();
 
     // Get items
     $query_all_items = "select * from items order by name;";
-    $result_all_items = safe_mysqli_query($conn, $query_all_items, NULL);
+    $result_all_items = safe_mysqli_query($conn, $query_all_items);
 
     $error = "";
 
@@ -27,7 +27,7 @@ session_start();
     function handleBuyItem($id_buy, $amount_buy, $conn_buy)
     {
         $query_validate_stock = "select stock from items where id = ?;";
-        if ($result_stock = safe_mysqli_query($conn_buy, $query_validate_stock, "i", $id_buy))
+        if ($result_stock = safe_mysqli_query($conn_buy, $query_validate_stock, "i", [$id_buy]))
         {
             if ($result_stock->fetch_assoc()["stock"] < $amount_buy)
             {
@@ -35,7 +35,7 @@ session_start();
             }
 
             $query_buy_item = "update items set stock = stock - ? where id = ?;";
-            if (safe_mysqli_query($conn_buy, $query_buy_item, "ii", $amount_buy))
+            if (safe_mysqli_query($conn_buy, $query_buy_item, "ii", [$amount_buy, $id_buy], false))
             {
                 header("Refresh:0");
                 return "";
@@ -67,7 +67,7 @@ session_start();
         }
 
         $search_string = substr($search_string, 0, strlen($search_string)-4);
-        $result_search = safe_mysqli_query($conn, $search_string, str_repeat("s", count($search_keywords)), ...$keywords_all);
+        $result_search = safe_mysqli_query($conn, $search_string, str_repeat("s", count($search_keywords)), $keywords_all);
         $result_search_count = mysqli_num_rows($result_search);
     }
 ?>
