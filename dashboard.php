@@ -1,18 +1,16 @@
 <?php
-require_once(__DIR__."/helper/safe_mysqli_query.php");
+require_once(__DIR__."/controllers/connection.php");
+require_once(__DIR__ . "/helper/safe_mysqli_query.php");
 session_start();
 
-    // If not logged in redirect to login
-    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) 
-    {
-        header("location: login.php");
-        exit;
-    }
+// If not logged in redirect to login
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) {
+    header("location: login.php");
+    exit;
+}
 
-    require_once 'controllers/connection.php';
-
-    // Get groomings
-    $query_today_groomings = "
+// Get groomings
+$query_today_groomings = "
     select
         g.id groom_id,
         m.id member_id, 
@@ -31,8 +29,8 @@ session_start();
     order by date asc, time asc;
     ";
 
-    // Get purchases history
-    $query_purchases_history = "
+// Get purchases history
+$query_purchases_history = "
     select
         p.id id,
         i.id item_id, 
@@ -47,9 +45,9 @@ session_start();
     order by p.created_at desc;
     ";
 
-    $result_today_groomings = safe_mysqli_query($conn, $query_today_groomings);
-    $result_purchases_history = safe_mysqli_query($conn, $query_purchases_history);
-    $error = "";
+$result_today_groomings = safe_mysqli_query($conn, $query_today_groomings);
+$result_purchases_history = safe_mysqli_query($conn, $query_purchases_history);
+$error = "";
 
 ?>
 
