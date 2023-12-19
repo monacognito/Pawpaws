@@ -1,12 +1,16 @@
 <?php
 
-function safe_mysqli_query(mysqli $conn, $stmt, $bind_str, ...$var) {
+function safe_mysqli_query(mysqli $conn, $stmt, $types = NULL, $vars = NULL, $expect_result = true) {
     $prep_stmt = $conn->prepare($stmt);
-    if (isset($bind_str)) {
-        $prep_stmt->bind_param($bind_str, ...$var);
+    if (isset($types) && isset($vars)) {
+        $prep_stmt->bind_param($types, ...$vars);
     }
-    $prep_stmt->execute();
-    $result = $prep_stmt->get_result();
+
+    $result = $prep_stmt->execute();
+    if ($expect_result) {
+        $result = $prep_stmt->get_result();
+    }
+
     $prep_stmt->close();
     return $result;
 }
