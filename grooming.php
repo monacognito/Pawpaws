@@ -48,21 +48,21 @@ order by date asc, time asc;";
 
 $result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings);
 $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
-$result = "";
 
+$result = NULL;
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST["newGroomingSubmit"]) && $_POST["newGroomingSubmit"] === "Submit") {
-        submitGrooming($conn);
+        $result = submitGrooming($conn);
     }
 
     // Handle delete
     if (isset($_POST["deleteGrooming"])) {
-        deleteGrooming($_POST["deleteGrooming"], $conn);
+        $result = deleteGrooming($_POST["deleteGrooming"], $conn);
     }
 
     // Handle pay
     if (isset($_POST["payGrooming"])) {
-        payGrooming($_POST["payGrooming"], $conn);
+        $result = payGrooming($_POST["payGrooming"], $conn);
     }
 }
 ?>
