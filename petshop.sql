@@ -131,7 +131,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
-(1, 'admin', 'admin', '2023-01-15 14:31:26');
+(1, 'admin', '$argon2id$v=19$m=65536,t=4,p=1$Ym90dEwyUkxlLnJXMG5yQg$TRI21sTVwSEORxoQxG1mte9yRlMNbiHeVXfg1ZBJ5SI', '2023-01-15 14:31:26');
+INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
+(2, 'admin2', '$argon2id$v=19$m=65536,t=4,p=1$Qml5OVBhVlNkNFdjbTVhdQ$pzQmu+CVHubKhJ1oi1PvDqpvr7LG07L0CpaIAU4Twms', '2023-01-15 14:31:26');
+INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
+(3, 'admin3', '$argon2id$v=19$m=65536,t=4,p=1$R2pyblY0ZnlLRGllVUguYw$J40QJtkazmgmoRBoGSxok7FSNUFkEI3aOY9q5k1TBC8', '2023-01-15 14:31:26');
 
 --
 -- Indexes for dumped tables
