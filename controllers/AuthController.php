@@ -62,14 +62,14 @@
                     mysqli_stmt_store_result($stmt);
 
                     // If username exist
-                    if (mysqli_stmt_num_rows($stmt) == 1) 
+                    if (mysqli_stmt_num_rows($stmt) === 1) 
                     {
                         mysqli_stmt_bind_result($stmt, $id, $username, $db_password);
 
                         if (mysqli_stmt_fetch($stmt)) 
                         {
                             // If password match
-                            if ($password === $db_password)
+                            if (password_verify($password,$db_password))
                             {
                                 session_start();
 
@@ -96,7 +96,7 @@
                     }
                 } else 
                 {
-                    $error = "Some error";
+                    $error = "An error occurred. Please try again later.";
                 }
                 mysqli_stmt_close($stmt);
             }
