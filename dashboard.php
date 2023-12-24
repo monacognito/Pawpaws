@@ -1,15 +1,15 @@
 <?php
-require_once(__DIR__."/controllers/connection.php");
-require_once(__DIR__ . "/helper/safe_mysqli_query.php");
+
+require_once(__DIR__ . "/controllers/connection.php");
+require_once(__DIR__ . "/controllers/helper/check_session.php");
+require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
+
 session_start();
 
 // If not logged in redirect to login
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] != true) {
-    header("location: login.php");
-    exit;
-}
+check_session();
 
-// Get groomings
+// Get grooming
 $query_today_groomings = "
     select
         g.id groom_id,
@@ -22,7 +22,7 @@ $query_today_groomings = "
         g.groom_time as time,
         g.price,
         g.is_paid
-    from groomings g
+    from grooming g
     join members m
         on g.member_id = m.id
     where groom_date = curdate()
