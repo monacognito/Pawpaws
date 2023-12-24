@@ -1,72 +1,43 @@
 <?php
-require_once(__DIR__ . "/controllers/connection.php");
-require_once(__DIR__ . "/helper/safe_mysqli_query.php");
+
+require_once(__DIR__ . "/controllers/purchase_controller.php");
+require_once(__DIR__ . "/controllers/helper/check_session.php");
+require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
+require_once(__DIR__ . "/controllers/helper/csrf.php");
+
 session_start();
 
-// If not logged in redirect to login
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
+// If not logged in, redirect to login
+check_session();
+
+if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+
+$result = NULL;
+
+// Buy item
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["buy_item"])) {
+    if (!verify_CSRF_token($_POST['csrf_token'])) {
+        $result = "ERROR: CSRF token mismatch.";
+    } else {
+        $buy_item = $_POST["buy_item"];
+        $buy_amount = $_POST["buy_amount"];
+        $result = buy_item($conn, $buy_item, $buy_amount);
+    }
 }
 
-function buyItem($id_buy, $amount_buy, $conn_buy)
-{
-    $query_validate_stock = "select stock from items where id = ?;";
-    if ($result_stock = safe_mysqli_query($conn_buy, $query_validate_stock, "i", [$id_buy])) {
-        if ($result_stock->fetch_assoc()["stock"] < $amount_buy) {
-            return "unavailable stock";
-        }
+$search_error = NULL;
+$search_result = NULL;
+$search_result_count = NULL;
 
-        $query_buy_item = "update items set stock = stock - ? where id = ?;";
-        if (safe_mysqli_query($conn_buy, $query_buy_item, "ii", [$amount_buy, $id_buy], false)) {
-            header("Refresh:0");
-            return null;
-        }
-
-        return "sql error";
-    } else
-        return "sql error";
+// search item
+if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['search'])) {
+    $keyword = htmlspecialchars(trim($_GET["keyword"]));
+    [$search_result, $search_result_count] = search_item($conn, $keyword);
 }
 
 // Get items
 $query_all_items = "select * from items order by name;";
 $result_all_items = safe_mysqli_query($conn, $query_all_items);
-
-$error = NULL;
-
-// Buy item
-if (array_key_exists("buyItem", $_POST)) {
-    $amount = trim($_POST["buyAmount"]);
-    if (empty($amount) || !is_numeric($amount)) {
-        $error = "Amount must be numerical";
-    }
-    $error = buyItem($_POST["buyItem"], $amount, $conn);
-}
-
-$result_search_count = 0;
-$keywords_all = "";
-$error_search = NULL;
-// search item
-if (isset($_GET['search'])) {
-    // Sanity check & validation
-    $keyword = htmlspecialchars(trim($_GET["keyword"]));
-    if (empty($keyword)) {
-        $error_search = "ERROR: Search input cannot be empty";
-    }
-
-    $search_string = "select * from items where ";
-    $keywords_all = array();
-
-    $search_keywords = explode(' ', $keyword);
-    foreach ($search_keywords as $word) {
-        $search_string .= "name like ? or ";
-        $keywords_all[] = $word;
-    }
-
-    $search_string = substr($search_string, 0, strlen($search_string) - 4);
-    $result_search = safe_mysqli_query($conn, $search_string, str_repeat("s", count($search_keywords)), $keywords_all);
-    $result_search_count = mysqli_num_rows($result_search);
-}
 ?>
 
 <!DOCTYPE html>
@@ -96,9 +67,9 @@ if (isset($_GET['search'])) {
 
     <div class="flex">
         <div class="flex-50 padding-10px center-child-horizontal flex-col">
-            <?php echo $error; ?>
             <h2>All items</h2>
             <div class="container-items flex-col">
+                <?php echo $result; ?>
                 <ul>
                     <?php
                     if (mysqli_num_rows($result_all_items)) {
@@ -110,6 +81,7 @@ if (isset($_GET['search'])) {
                                     <div class="flex-row justify-between">
                                         <b><?php echo $data['name']; ?></b>
                                         <form method="post" style="display:inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                                             <input class="input-number" type="number" required="required" name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
                                             <input class="pay-button" type="submit" name="buy_item" value="Purchase">
                                             <input type="hidden" name="buy_item" value=<?php echo $data['id'] ?>>
@@ -117,7 +89,7 @@ if (isset($_GET['search'])) {
                                     </div>
                                     <div class="description"><?php echo $data['description'] ?></div>
                                 </div>
-                                <div>IDR <?php echo $data['price']; ?> | (<?php echo $data['stock']; ?> In stock)</div>
+                                <div>ID <?php echo $data['id']; ?> | IDR <?php echo $data['price']; ?> | (<?php echo $data['stock']; ?> In stock)</div>
                             </li>
                             <?php $sn++;
                         }
@@ -136,37 +108,41 @@ if (isset($_GET['search'])) {
                     <form method="get" action="purchase.php">
                         <div>
                             <input type="text" placeholder="search here..." name="keyword" required="required"
-                                   value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"/>
+                                   value="<?php echo $_GET['keyword'] ?? NULL ?>"/>
                             <button name="search">Search</button>
                         </div>
                     </form>
                 </div>
             </div>
             <div>
-                <?php if (!empty($error_search)) {
-                    echo $error_search;
+                <?php if ($search_result_count === NULL) {
+                    // NULL count means error, so display error message
+                    echo $search_result;
                 } else if (!empty($keyword)) {
-                    echo "results for \"" . $keyword . "\"";
+                    // Display user's input
+                    echo "Result for \"" . $keyword . "\":";
                 } else {
-                    echo "result will be displayed below";
+                    // User hasn't input anything
+                    echo "Result will be displayed below";
                 }
                 ?>
             </div>
             <div class="container-items flex-col">
                 <ul>
                     <?php
-                    if ($result_search_count) {
+                    if ($search_result_count) {
                         $sn = 1;
-                        while ($data = mysqli_fetch_assoc($result_search)) {
+                        while ($data = mysqli_fetch_assoc($search_result)) {
                             ?>
                             <li>
                                 <div class="flex-col">
                                     <div class="flex-row justify-between">
                                         <b><?php echo $data['name']; ?></b>
                                         <form method="post" style="display:inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                                             <input class="input-number" type="number" required="required"
-                                                   name="buyAmount" max=<?php echo $data['stock'] ?> min = 0>
-                                            <input class="pay-button" type="submit" name="buyItem"
+                                                   name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                            <input class="pay-button" type="submit" name="buy_item"
                                                    value=<?php echo $data['id'] ?>>
                                         </form>
                                     </div>
