@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . "/connection.php");
+
 function create_membership($db_conn): string {
     $name = htmlspecialchars(trim($_POST["name"]));
     $breed = htmlspecialchars(trim($_POST["type"]));
