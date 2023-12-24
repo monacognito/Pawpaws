@@ -38,10 +38,10 @@ function create_membership($db_conn): string {
     return $result;
 }
 
-function deleteMember($id_delete, $conn_delete) {
+function delete_membership($db_conn, $member_id): string {
     $query_delete_member = "delete from members where id = ?;";
-    if (safe_mysqli_query($conn_delete, $query_delete_member, "i", [$id_delete], false)) {
-        $result = "Successfully deleted member with ID " . $id_delete;
+    if (safe_mysqli_query($db_conn, $query_delete_member, "i", [$member_id], false)) {
+        $result = "Successfully deleted member with ID " . $member_id;
         header("location: membership.php");
     } else {
         $result = "ERROR: Unknown database error occurred";
