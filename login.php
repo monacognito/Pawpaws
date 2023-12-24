@@ -1,3 +1,11 @@
+<?php
+require_once(__DIR__ . "/controllers/helper/csrf.php");
+
+session_start();
+
+if(!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,13 +17,14 @@
     <title>Login</title>
 </head>
 <body>
-<form action="controllers/AuthController.php" method="post">
+<form action="controllers/auth_controller.php" method="post">
     <h2>Admin Login</h2>
     <?php if (isset($_SESSION['error_message'])) {
         echo '<br>' . '<div class="error-message">' . $_SESSION['error_message'] . '</div>';
         unset($_SESSION['error_message']);
     } ?>
     <br>
+    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
     <label>Username</label>
     <input type="text" name="username" placeholder="e.g Jennie"><br>
     <label>Password</label>
