@@ -11,6 +11,10 @@
 <body>
 <form action="controllers/AuthController.php" method="post">
     <h2>Admin Login</h2>
+    <?php if (isset($_SESSION['error_message'])) {
+        echo '<br>' . '<div class="error-message">' . $_SESSION['error_message'] . '</div>';
+        unset($_SESSION['error_message']);
+    } ?>
     <br>
     <label>Username</label>
     <input type="text" name="username" placeholder="e.g Jennie"><br>
