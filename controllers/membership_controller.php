@@ -50,10 +50,10 @@ function delete_membership($db_conn, $member_id): string {
     return $result;
 }
 
-function markMemberPaid($id_extend, $conn_extend) {
+function extend_membership($db_conn, $member_id): string {
     $query_extend_member = "update members set expired_at = date_add(now(), interval 6 month) where id = ?;";
-    if (safe_mysqli_query($conn_extend, $query_extend_member, "i", [$id_extend], false)) {
-        $result = "Successfully extended member with ID " . $id_extend;
+    if (safe_mysqli_query($db_conn, $query_extend_member, "i", [$member_id], false)) {
+        $result = "Successfully extended membership with ID " . $member_id;
         header("location: membership.php");
     } else {
         $result = "ERROR: Unknown database error occurred";
