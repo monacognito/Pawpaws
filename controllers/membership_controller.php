@@ -9,20 +9,20 @@ function createMember($conn_create) {
 
     // Sanity check & validation
     $error = NULL;
-    if (empty($name) || !ctype_alpha($name)) {
+    if (empty($name) || !ctype_alpha(str_replace(' ', '', $name))) {
         $error .= "ERROR: Name must contain only alphabetical characters" . nl2br("\n");
     }
-    if (empty($breed) || !ctype_alpha($breed)) {
+    if (empty($breed) || !ctype_alpha(str_replace(' ', '', $breed))) {
         $error .= "ERROR: Pet breed must contain only alphabetical characters" . nl2br("\n");
     }
     if (empty($gender) || !($gender === "m" XOR $gender === "f")) {
         $error .= "ERROR: Pet gender must be male or female" . nl2br("\n");
     }
-    if (empty($owner_mobile) || !preg_match('/^[0-9]{14}+$/', $owner_mobile)) {
+    if (empty($owner_mobile) || !preg_match('/^[0-9]{0,14}+$/', $owner_mobile)) {
         $error .= "ERROR: Mobile number must be within 14 digits" . nl2br("\n");
     }
-    if (empty($address) || !ctype_alpha($address)) {
-        $error .= "ERROR: Address must contain only alphabetical characters" . nl2br("\n");
+    if (empty($address) || !ctype_alnum(str_replace(' ', '', $address))) {
+        $error .= "ERROR: Address must contain only alphanumeric characters" . nl2br("\n");
     }
     if ($error !== NULL) {
         return $error;
