@@ -1,16 +1,38 @@
 <?php
-require_once(__DIR__ . "/helper/safe_mysqli_query.php");
-require_once(__DIR__ . "/helper/grooming_actions.php");
-require_once(__DIR__ . "/controllers/connection.php");
+
+require_once(__DIR__ . "/controllers/grooming_controller.php");
+require_once(__DIR__ . "/controllers/helper/check_session.php");
+require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
+require_once(__DIR__ . "/controllers/helper/csrf.php");
+
 session_start();
 
 // if not logged in redirect to login
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
+check_session();
+
+if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+
+$result = NULL;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!verify_CSRF_token($_POST['csrf_token'])) {
+        $result = "ERROR: CSRF token mismatch.";
+    } else {
+        // Submit grooming request
+        if (isset($_POST["submit_grooming"]) && $_POST["submit_grooming"] === "Submit") {
+            $result = submit_grooming($conn);
+        }
+        // Delete grooming request
+        if (isset($_POST["delete_grooming"])) {
+            $result = delete_grooming($conn, $_POST["delete_grooming"]);
+        }
+        // Finish (pay) grooming request
+        if (isset($_POST["pay_grooming"])) {
+            $result = pay_grooming($conn, $_POST["pay_grooming"]);
+        }
+    }
 }
 
-// Get groomings
+// Get grooming
 $query_unpaid_groomings = "
 select
     g.id as groom_id,
@@ -22,7 +44,7 @@ select
     g.groom_date as date,
     g.groom_time as time,
     g.price as price
-from groomings g
+from grooming g
 join members m
     on g.member_id = m.id
 where is_paid = false
@@ -39,7 +61,7 @@ select
     g.groom_date as date,
     g.groom_time as time,
     g.price as price
-from groomings g
+from grooming g
 join members m
     on g.member_id = m.id
 where is_paid = true
@@ -47,23 +69,6 @@ order by date asc, time asc;";
 
 $result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings);
 $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
-
-$result = NULL;
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["newGroomingSubmit"]) && $_POST["newGroomingSubmit"] === "Submit") {
-        $result = submitGrooming($conn);
-    }
-
-    // Handle delete
-    if (isset($_POST["deleteGrooming"])) {
-        $result = deleteGrooming($_POST["deleteGrooming"], $conn);
-    }
-
-    // Handle pay
-    if (isset($_POST["payGrooming"])) {
-        $result = payGrooming($_POST["payGrooming"], $conn);
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -95,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="container-new-form">
             <?php echo $result; ?>
             <form action="grooming.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                 <h2>New Grooming</h2>
                 <label for="member_id">ID</label>
                 <input class="block" type="number" id="member_id" name="member_id" maxlength="50" placeholder="10">
@@ -108,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="date">Date</label>
                 <input class="block" type="date" id="date" name="date" value="<?php echo date('Y-m-d'); ?>">
                 <br>
-                <input type="submit" name="newGroomingSubmit" value="Submit">`
+                <input type="submit" name="submit_grooming" value="Submit">`
             </form>
         </div>
     </div>
@@ -127,12 +133,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </div>
                             <div>
                                 <form method="post" style="display:inline;">
-                                    <input class="delete-button" type="submit" name="deleteGrooming" value="Delete">
-                                    <input type="hidden" name="deleteGrooming" value=<?php echo $data['groom_id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="delete-button" type="submit" name="delete_grooming" value="Delete">
+                                    <input type="hidden" name="delete_grooming" value=<?php echo $data['groom_id'] ?>>
                                 </form>
                                 <form method="post" style="display:inline;">
-                                    <input class="pay-button" type="submit" name="payGrooming" value="Pay">
-                                    <input type="hidden" name="payGrooming" value=<?php echo $data['groom_id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="pay-button" type="submit" name="pay_grooming" value="Pay">
+                                    <input type="hidden" name="pay_grooming" value=<?php echo $data['groom_id'] ?>>
                                 </form>
                             </div>
                         </div>
@@ -161,8 +169,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 <b><?php echo $data['name']; ?></b> - <?php echo $data['type']; ?>
                             </div>
                             <form method="post" style="display:inline;">
-                                <input class="delete-button" type="submit" name="deleteGrooming"
-                                       value=<?php echo $data['groom_id'] ?>>
+                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                <input class="delete-button" type="submit" name="delete_grooming" value="Delete">
+                                <input type="hidden" name="delete_grooming" value=<?php echo $data['groom_id']; ?>>
                             </form>
                         </div>
                         <div>IDR <?php echo $data['price']; ?> | <?php echo $data['date']; ?> </div>
