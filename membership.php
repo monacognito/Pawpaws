@@ -1,39 +1,45 @@
 <?php
-require_once(__DIR__."/controllers/connection.php");
-require_once(__DIR__."/helper/member_actions.php");
-require_once(__DIR__."/helper/safe_mysqli_query.php");
+
+require_once(__DIR__ . "/controllers/helper/csrf.php");
+require_once(__DIR__ . "/controllers/membership_controller.php");
+require_once(__DIR__ . "/controllers/helper/check_session.php");
+require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
+
 session_start();
 
 // if not logged in redirect to login
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
+check_session();
+
+if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+
+// New member form
+$result = NULL;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!verify_CSRF_token($_POST['csrf_token'])) {
+        $result = "ERROR: CSRF token mismatch.";
+    } else {
+        // Create membership
+        if (isset($_POST["create_membership"]) && $_POST["create_membership"] === "submit") {
+            $result = create_membership($conn);
+        }
+        // Delete membership
+        if (isset($_POST["delete_membership"])) {
+            $result = delete_membership($conn, $_POST["delete_membership"]);
+        }
+        // Extend membership
+        if (isset($_POST["extend_membership"])) {
+            $result = extend_membership($conn, $_POST["extend_membership"]);
+        }
+    }
 }
 
-    // Get members 
+// Get members
 $query_active_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
                         where expired_at >= now();";
 $query_inactive_member = "select id, name, type, gender, owner_mobile, address, expired_at from members
                         where expired_at < now();";
 $result_active_member = safe_mysqli_query($conn, $query_active_member);
 $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
-
-// New member form
-$result = NULL;
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Create member
-    if (isset($_POST["newMemberSubmit"]) && $_POST["newMemberSubmit"] === "submit") {
-        $result = createMember($conn);
-    }
-    // Delete member
-    if (isset($_POST["deleteMember"])) {
-        $result = deleteMember($_POST["deleteMember"], $conn);
-    }
-    // Mark member paid
-    if (isset($_POST["markMemberPaid"])) {
-        $result = markMemberPaid($_POST["markMemberPaid"], $conn);
-    }
-}
 
 ?>
 
@@ -64,10 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div class="flex">
     <div class="flex-20 padding-10px center-child-horizontal overflow-auto h-100">
         <div class="container-new-member">
-            <?php echo $result; ?>
             <form action="membership.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                 <h2>New Member</h2>
-                <label>name</label>
+                <?php if (isset($result)) echo $result . nl2br("\n\n"); ?>
+                <label>Name</label>
                 <input class="block" required="required" type="text" name="name" maxlength="50" placeholder="Bonne">
                 <label>Animal Breed</label>
                 <input class="block" required="required" type="text" name="type" maxlength="50"
@@ -85,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label>Address</label>
                 <input class="block" required="required" type="text" name="address" maxlength="50"
                        placeholder="9 Blue Ave. Cimahi">
-                <input type="submit" name="newMemberSubmit" value="submit">
+                <input type="submit" name="create_membership" value="submit">
             </form>
         </div>
     </div>
@@ -104,12 +111,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </div>
                             <div>
                                 <form method="post" style="display:inline;">
-                                    <input class="delete-button" type="submit" name="deleteMember" value="Delete">
-                                    <input type="hidden" name="deleteMember" value=<?php echo $data['id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="delete-button" type="submit" name="delete_membership" value="Delete">
+                                    <input type="hidden" name="delete_membership" value=<?php echo $data['id'] ?>>
                                 </form>
                                 <form method="post" style="display:inline;">
-                                    <input class="pay-button" type="submit" name="markMemberPaid" value="Mark paid">
-                                    <input type="hidden" name="markMemberPaid" value=<?php echo $data['id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="pay-button" type="submit" name="extend_membership" value="Extend">
+                                    <input type="hidden" name="extend_membership" value=<?php echo $data['id'] ?>>
                                 </form>
                             </div>
                             <div>Expiry Date <?php echo $data['expired_at']; ?> </div>
@@ -138,12 +147,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </div>
                             <div>
                                 <form method="post" style="display:inline;">
-                                    <input class="delete-button" type="submit" name="deleteMember" value="Delete">
-                                    <input type="hidden" name="deleteMember" value=<?php echo $data['id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="delete-button" type="submit" name="delete_membership" value="Delete">
+                                    <input type="hidden" name="delete_membership" value=<?php echo $data['id'] ?>>
                                 </form>
                                 <form method="post" style="display:inline;">
-                                    <input class="pay-button" type="submit" name="markMemberPaid" value="Mark paid">
-                                    <input type="hidden" name="markMemberPaid" value=<?php echo $data['id'] ?>>
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
+                                    <input class="pay-button" type="submit" name="extend_membership" value="Mark paid">
+                                    <input type="hidden" name="extend_membership" value=<?php echo $data['id'] ?>>
                                 </form>
                             </div>
                             <div>Expiry Date: <?php echo $data['expired_at']; ?> </div>
