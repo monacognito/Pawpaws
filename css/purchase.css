@@ -12,11 +12,10 @@
 .pay-button {
   padding:5px 15px; 
   font-size: 14px;
-  width: 30px;
   overflow:hidden;
   border:none;
   background: rgb(6, 116, 17);
-  color: rgb(6, 116, 17);
+  color: white;
   height:auto;
   outline: none;
   cursor: pointer;

@@ -88,10 +88,6 @@ if (isset($_GET['search'])) {
             <a href="grooming.php" class="navbar-item">Grooming</a>
             <a href="purchase.php" class="navbar-item navbar-on">Purchase</a>
             <a href="membership.php" class="navbar-item">Membership</a>
-            <div class="h-20px flex-row mt-10px">
-                <input class="pay-button" style="height:30px" type="submit" name="" value="0">
-                <div>-input purchase</div>
-            </div>
         </div>
         <a href="logout.php" class="navbar-item">Logout</a>
     </div>
@@ -114,10 +110,9 @@ if (isset($_GET['search'])) {
                                     <div class="flex-row justify-between">
                                         <b><?php echo $data['name']; ?></b>
                                         <form method="post" style="display:inline;">
-                                            <input class="input-number" type="number" required="required"
-                                                   name="buyAmount" max=<?php echo $data['stock'] ?> min = 0>
-                                            <input class="pay-button" type="submit" name="buyItem"
-                                                   value=<?php echo $data['id'] ?>>
+                                            <input class="input-number" type="number" required="required" name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                            <input class="pay-button" type="submit" name="buy_item" value="Purchase">
+                                            <input type="hidden" name="buy_item" value=<?php echo $data['id'] ?>>
                                         </form>
                                     </div>
                                     <div class="description"><?php echo $data['description'] ?></div>
