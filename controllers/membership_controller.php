@@ -1,6 +1,6 @@
 <?php
 
-function createMember($conn_create) {
+function create_membership($db_conn): string {
     $name = htmlspecialchars(trim($_POST["name"]));
     $breed = htmlspecialchars(trim($_POST["type"]));
     $gender = trim($_POST['gender']);
@@ -29,7 +29,7 @@ function createMember($conn_create) {
     }
 
     $query_new_member = "insert into members value (default, ?, ?, ?, ?, ?, default, default);";
-    if (safe_mysqli_query($conn_create, $query_new_member, "sssss", [$name, $breed, $gender, $owner_mobile, $address])) {
+    if (safe_mysqli_query($db_conn, $query_new_member, "sssss", [$name, $breed, $gender, $owner_mobile, $address], false)) {
         $result = "Successfully created member \"" . $name . "\"";
     } else {
         $result = "ERROR: Unknown database error occurred.";
