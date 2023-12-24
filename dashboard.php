@@ -117,7 +117,7 @@ $error = "";
                                 <b><?php echo $data['name']; ?></b> - <?php echo $data['type']; ?>
                             </div>
                             <?php
-                            if ($data['is_paid'] == true) {
+                            if ($data['is_paid']) {
                                 echo "<div>paid</div>";
                             } else {
                                 echo "<div><b>unpaid IDR " . $data['price'] . "</b></div>";
