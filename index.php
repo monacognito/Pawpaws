@@ -1,16 +1,12 @@
 <?php
 
-    session_start();
+require_once(__DIR__ . "/controllers/helper/check_session.php");
 
-    //require_once "controllers/AuthController.php";
+session_start();
 
-    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true)
-    {
-        header("location: dashboard.php");
-        exit;
-    } else
-    {
-        header("location: login.php");
-        exit;
-    }
-?>
+// Redirect to login page if session expires
+check_session();
+
+// Redirect to dashboard page by default
+header("Location: dashboard.php");
+exit;
