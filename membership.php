@@ -11,7 +11,9 @@ session_start();
 // if not logged in redirect to login
 check_session();
 
-if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+if (!isset($_SESSION['csrf_token'])) {
+    generate_CSRF_token();
+}
 
 // New member form
 $result = NULL;
@@ -24,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header(sprintf("Retry-After: %d", $rate_limit_exp - time()));
     } else if (!verify_CSRF_token($_POST['csrf_token'])) { // CSRF token check
         $result = "ERROR: CSRF token mismatch.";
+        header("HTTP/1.1 403 Forbidden");
     } else {
         // Create membership
         if (isset($_POST["create_membership"]) && $_POST["create_membership"] === "submit") {

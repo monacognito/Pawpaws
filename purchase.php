@@ -11,7 +11,9 @@ session_start();
 // If not logged in, redirect to login
 check_session();
 
-if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+if (!isset($_SESSION['csrf_token'])) {
+    generate_CSRF_token();
+}
 
 $result = NULL;
 $rate_limit_exp = 0;
@@ -25,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["buy_item"])) {
         header(sprintf("Retry-After: %d", $rate_limit_exp - time()));
     } else if (!verify_CSRF_token($_POST['csrf_token'])) {
         $result = "ERROR: CSRF token mismatch.";
+        header("HTTP/1.1 403 Forbidden");
     } else {
         $buy_item = $_POST["buy_item"];
         $buy_amount = $_POST["buy_amount"];

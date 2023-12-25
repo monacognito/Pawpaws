@@ -3,7 +3,9 @@ require_once(__DIR__ . "/controllers/helper/csrf.php");
 
 session_start();
 
-if(!isset($_SESSION['csrf_token'])) generate_CSRF_token();
+if(!isset($_SESSION['csrf_token'])) {
+    generate_CSRF_token();
+}
 ?>
 
 <!DOCTYPE html>
