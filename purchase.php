@@ -100,9 +100,10 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                                         <form method="post" style="display:inline;">
                                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                                             <label>
-                                                Amount to buy
-                                                <input class="input-number" type="number" required="required" name="buy_amount" max=<?php echo $data['stock'] ?> min
-                                            </label> = 0>
+                                                Amount:
+                                                <input class="input-number" type="number" required="required"
+                                                       name="buy_amount" min="0" max=<?php echo $data['stock'] ?> min
+                                            </label>
                                             <input class="pay-button" type="submit" name="buy_item" value="Purchase">
                                             <input type="hidden" name="buy_item" value=<?php echo $data['id'] ?>>
                                         </form>
@@ -166,7 +167,7 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                                             <label>
                                                 Amount to buy
                                                 <input class="input-number" type="number" required="required"
-                                                       name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                                       name="buy_amount" min="0" max=<?php echo $data['stock'] ?>>
                                             </label>
                                             <input class="pay-button" type="submit" name="buy_item"
                                                    value=<?php echo $data['id'] ?>>
