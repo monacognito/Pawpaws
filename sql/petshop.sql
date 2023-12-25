@@ -68,7 +68,7 @@ CREATE TRIGGER `before_update_item`
 begin
     if new.stock < old.stock then
         insert into purchases value (
-                                     null,
+                                     new.id,
                                      new.id,
                                      old.stock - new.stock,
                                      new.price * (old.stock - new.stock),
