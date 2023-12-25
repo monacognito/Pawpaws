@@ -31,17 +31,12 @@ function search_item($db_conn, $keyword): array {
         return ["ERROR: Search input cannot be empty", NULL];
     }
 
-    $search_string = "select * from items where ";
-    $keywords_all = array();
-
     $search_keywords = explode(' ', $keyword);
-    foreach ($search_keywords as $word) {
-        $search_string .= "name like ? or ";
-        $keywords_all[] = $word;
-    }
-
+    $search_string = "select * from items where " . str_repeat("name like concat('%', ?, '%') or ", count($search_keywords));
     $search_string = substr($search_string, 0, strlen($search_string) - 4);
-    $search_result = safe_mysqli_query($db_conn, $search_string, str_repeat("s", count($search_keywords)), $keywords_all);
+
+    $db_bind_str = str_repeat("s", count($search_keywords));
+    $search_result = safe_mysqli_query($db_conn, $search_string, $db_bind_str, $search_keywords);
     $search_result_count = mysqli_num_rows($search_result);
 
     return [$search_result, $search_result_count];
