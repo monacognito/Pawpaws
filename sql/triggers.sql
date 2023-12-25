@@ -4,7 +4,7 @@ create trigger before_delete_member
     on members
     for each row
 begin
-    delete from groomings where member_id = old.id;
+    delete from grooming where member_id = old.id;
 end
 //
 

@@ -8,7 +8,7 @@ create table users
 
 insert into users value (
                          1,
-                         "admin",
-                         "admin",
+                         'admin',
+                         'admin',
                          default
     );

@@ -9,15 +9,15 @@ create table items
 
 insert into items value (
                          default,
-                         "Dog Food Canine 500g",
-                         "Dog Food kering untuk anjing ukuram 5-10kg",
-                         "40000",
+                         'Dog Food Canine 500g',
+                         'Dog Food kering untuk anjing ukuram 5-10kg',
+                         '40000',
                          50
     );
 insert into items value (
                          default,
-                         "Cat Food Whiskiz 480g",
-                         "Makanan kucing sedang",
-                         "35000",
+                         'Cat Food Whiskiz 480g',
+                         'Makanan kucing sedang',
+                         '35000',
                          22
     );

@@ -15,8 +15,8 @@ insert into grooming value (
                             default,
                             2,
                             default,
-                            "2024-10-10",
-                            "23:23",
+                            '2024-10-10',
+                            '23:23',
                             20000,
                             false
     );
