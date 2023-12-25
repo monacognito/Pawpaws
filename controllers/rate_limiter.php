@@ -33,9 +33,9 @@ class RateLimiter {
         }
 
         if (!$requestsInCurrentMinute) {
-            $this->setSessionKey($key, 1, ($minutes * 60 + 1));
+            $this->setSessionKey($key, ($minutes * 60 + 1));
         } else {
-            $this->increment($key, 1);
+            $this->increment($key);
         }
         if ($requests > $allowedRequests) {
             throw new RateExceededException;
@@ -51,17 +51,17 @@ class RateLimiter {
         return $keys;
     }
 
-    private function increment($key, $inc): void {
+    private function increment($key): void {
         $cnt = 0;
         if (isset($_SESSION['cache'][$key])) {
             $cnt = $_SESSION['cache'][$key];
         }
-        $_SESSION['cache'][$key] = $cnt + $inc;
+        $_SESSION['cache'][$key] = (++$cnt);
     }
 
-    private function setSessionKey($key, $val, $expiry): void {
+    private function setSessionKey($key, $expiry): void {
         $_SESSION["expires"][$key] = time() + $expiry;
-        $_SESSION['cache'][$key] = $val;
+        $_SESSION['cache'][$key] = 1;
     }
 
     private function getSessionKey($key) {
@@ -82,7 +82,7 @@ function rate_limiter($token, $attempts, $minutes, $limit_duration): int {
     $rate_limiter = new RateLimiter($token);
     try {
         $rate_limiter->limitRequestsInMinutes($attempts, $minutes);
-    } catch (RateExceededException $e) {
+    } catch (RateExceededException) {
         if (!isset($_SESSION['rate_limit_exp'])) {
             $_SESSION['rate_limit_exp'] = time() + $limit_duration;
         }

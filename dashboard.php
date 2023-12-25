@@ -12,8 +12,8 @@ check_session();
 // Get grooming
 $query_today_groomings = "
     select
-        g.id groom_id,
-        m.id member_id, 
+        g.id as groom_id,
+        m.id as member_id, 
         m.name as name,
         m.type as type,
         m.gender as gender,
@@ -26,14 +26,14 @@ $query_today_groomings = "
     join members m
         on g.member_id = m.id
     where groom_date = curdate()
-    order by date asc, time asc;
+    order by date, time;
     ";
 
 // Get purchases history
 $query_purchases_history = "
     select
-        p.id id,
-        i.id item_id, 
+        p.id as id,
+        i.id as item_id, 
         i.name as name,
         p.amount as amount,
         p.total as total,
@@ -96,7 +96,7 @@ $error = "";
                     }
                 } else { ?>
                     <tr>
-                        <div colspan="8">No data found</div>
+                        <td colspan="8">No data found</td>
                     </tr>
                 <?php } ?>
             </ul>
@@ -129,7 +129,7 @@ $error = "";
                     }
                 } else { ?>
                     <tr>
-                        <div colspan="8">No data found</div>
+                        <td colspan="8">No data found</td>
                     </tr>
                 <?php } ?>
             </ul>

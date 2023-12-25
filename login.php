@@ -27,10 +27,16 @@ if(!isset($_SESSION['csrf_token'])) {
     } ?>
     <br>
     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
-    <label>Username</label>
-    <input type="text" name="username" placeholder="e.g Jennie"><br>
-    <label>Password</label>
-    <input type="password" name="password" placeholder="*********"><br>
+    <label>
+        Username
+        <input type="text" name="username" placeholder="e.g Jennie">
+    </label>
+    <br>
+    <label>
+        Password
+        <input type="password" name="password" placeholder="*********">
+    </label>
+    <br>
     <input type="submit" value="Login">
 </form>
 </body>

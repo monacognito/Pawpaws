@@ -1,6 +1,6 @@
 <?php
 
-function safe_mysqli_query(mysqli $conn, $stmt, $types = NULL, $vars = NULL, $expect_result = true) {
+function safe_mysqli_query(mysqli $conn, $stmt, $types = NULL, $vars = NULL, $expect_result = true): mysqli_result|bool {
     $prep_stmt = $conn->prepare($stmt);
     if (isset($types) && isset($vars)) {
         $prep_stmt->bind_param($types, ...$vars);

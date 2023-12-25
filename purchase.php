@@ -99,7 +99,10 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                                         <b><?php echo $data['name']; ?></b>
                                         <form method="post" style="display:inline;">
                                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
-                                            <input class="input-number" type="number" required="required" name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                            <label>
+                                                Amount to buy
+                                                <input class="input-number" type="number" required="required" name="buy_amount" max=<?php echo $data['stock'] ?> min
+                                            </label> = 0>
                                             <input class="pay-button" type="submit" name="buy_item" value="Purchase">
                                             <input type="hidden" name="buy_item" value=<?php echo $data['id'] ?>>
                                         </form>
@@ -112,7 +115,7 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                         }
                     } else { ?>
                         <tr>
-                            <div colspan="8">No data found</div>
+                            <td colspan="8">No data found</td>
                         </tr>
                     <?php } ?>
                 </ul>
@@ -124,8 +127,11 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                 <div>
                     <form method="get" action="purchase.php">
                         <div>
-                            <input type="text" placeholder="search here..." name="keyword" required="required"
-                                   value="<?php echo $_GET['keyword'] ?? NULL ?>"/>
+                            <label>
+                                Search
+                                <input type="text" placeholder="search here..." name="keyword" required="required"
+                                       value="<?php echo $_GET['keyword'] ?? NULL ?>"/>
+                            </label>
                             <button name="search">Search</button>
                         </div>
                     </form>
@@ -157,8 +163,11 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                                         <b><?php echo $data['name']; ?></b>
                                         <form method="post" style="display:inline;">
                                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
-                                            <input class="input-number" type="number" required="required"
-                                                   name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                            <label>
+                                                Amount to buy
+                                                <input class="input-number" type="number" required="required"
+                                                       name="buy_amount" max=<?php echo $data['stock'] ?> min = 0>
+                                            </label>
                                             <input class="pay-button" type="submit" name="buy_item"
                                                    value=<?php echo $data['id'] ?>>
                                         </form>
@@ -171,7 +180,7 @@ $result_all_items = safe_mysqli_query($conn, $query_all_items);
                         }
                     } else { ?>
                         <tr>
-                            <div colspan="8">No data found</div>
+                            <td colspan="8">No data found</td>
                         </tr>
                     <?php } ?>
                 </ul>

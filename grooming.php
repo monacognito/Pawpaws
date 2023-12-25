@@ -62,8 +62,8 @@ order by date asc, time asc;";
 
 $query_paid_groomings = "
 select
-    g.id groom_id,
-    m.id member_id, 
+    g.id as groom_id,
+    m.id as member_id, 
     m.name as name,
     m.type as type,
     m.gender as gender,
@@ -160,7 +160,7 @@ $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
                 }
             } else { ?>
                 <tr>
-                    <div colspan="8">No data found</div>
+                    <td colspan="8">No data found</td>
                 </tr>
             <?php } ?>
         </ul>
@@ -190,7 +190,7 @@ $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
                 }
             } else { ?>
                 <tr>
-                    <div colspan="8">No data found</div>
+                    <td colspan="8">No data found</td>
                 </tr>
             <?php } ?>
         </ul>

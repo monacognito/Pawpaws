@@ -84,11 +84,15 @@ $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                 <h2>New Member</h2>
                 <?php if (isset($result)) echo $result . nl2br("\n\n"); ?>
-                <label>Name</label>
-                <input class="block" required="required" type="text" name="name" maxlength="50" placeholder="Bonne">
-                <label>Animal Breed</label>
-                <input class="block" required="required" type="text" name="type" maxlength="50"
-                       placeholder="Chihuahua Dog">
+                <label>
+                    Name
+                    <input class="block" required="required" type="text" name="name" maxlength="50" placeholder="Bonne">
+                </label>
+                <label>
+                    Pet Breed
+                    <input class="block" required="required" type="text" name="type" maxlength="50"
+                           placeholder="Chihuahua Dog">
+                </label>
                 <fieldset>
                     <legend>gender</legend>
                     <input type="radio" name="gender" checked="checked" value="m" id="gender_m">
@@ -96,12 +100,16 @@ $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
                     <input type="radio" name="gender" value="f" id="gender_f">
                     <label for="gender_f">Female</label>
                 </fieldset>
-                <label>Owner's mobile</label>
-                <input class="block" required="required" type="text" name="owner_mobile" maxlength="14"
-                       placeholder="085320002000">
-                <label>Address</label>
-                <input class="block" required="required" type="text" name="address" maxlength="50"
-                       placeholder="9 Blue Ave. Cimahi">
+                <label>
+                    Mobile number
+                    <input class="block" required="required" type="text" name="owner_mobile" maxlength="14"
+                           placeholder="085320002000">
+                </label>
+                <label>
+                    Home address
+                    <input class="block" required="required" type="text" name="address" maxlength="50"
+                           placeholder="9 Blue Ave. Cimahi">
+                </label>
                 <input type="submit" name="create_membership" value="submit">
             </form>
         </div>
@@ -137,7 +145,7 @@ $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
                 }
             } else { ?>
                 <tr>
-                    <div colspan="8">No data found</div>
+                    <td colspan="8">No data found</td>
                 </tr>
             <?php } ?>
         </ul>
@@ -173,7 +181,7 @@ $result_inactive_member = safe_mysqli_query($conn, $query_inactive_member);
                 }
             } else { ?>
                 <tr>
-                    <div colspan="8">No data found</div>
+                    <td colspan="8">No data found</td>
                 </tr>
             <?php } ?>
         </ul>

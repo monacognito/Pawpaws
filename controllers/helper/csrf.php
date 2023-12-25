@@ -10,7 +10,7 @@ function generate_CSRF_token() {
     return $CSRF_token;
 }
 
-function verify_CSRF_token($CSRF_token = NULL) {
+function verify_CSRF_token($CSRF_token = NULL): bool {
     $CSRF_token = $CSRF_token ?? $_POST['csrf_token'];
     return hash_equals($_SESSION['csrf_token'], $CSRF_token);
 }
