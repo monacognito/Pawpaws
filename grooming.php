@@ -58,7 +58,7 @@ from grooming g
 join members m
     on g.member_id = m.id
 where is_paid = false
-order by date asc, time asc;";
+order by date, time;";
 
 $query_paid_groomings = "
 select
@@ -75,7 +75,7 @@ from grooming g
 join members m
     on g.member_id = m.id
 where is_paid = true
-order by date asc, time asc;";
+order by date, time;";
 
 $result_unpaid_groomings = safe_mysqli_query($conn, $query_unpaid_groomings);
 $result_paid_groomings = safe_mysqli_query($conn, $query_paid_groomings);
