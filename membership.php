@@ -1,7 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/controllers/helper/csrf.php");
+require_once(__DIR__ . "/controllers/rate_limiter.php");
 require_once(__DIR__ . "/controllers/membership_controller.php");
+require_once(__DIR__ . "/controllers/helper/csrf.php");
 require_once(__DIR__ . "/controllers/helper/check_session.php");
 require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
 
@@ -14,8 +15,14 @@ if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
 
 // New member form
 $result = NULL;
+$rate_limit_exp = 0;
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!verify_CSRF_token($_POST['csrf_token'])) {
+    $rate_limit_exp = rate_limiter(session_id(), 60, 1, 60 * 3);
+    if ($rate_limit_exp !== 0) {
+        $result = "ERROR: Too many attempts. Retry in " . $rate_limit_exp - time() . " seconds";
+        header("HTTP/1.1 429 Too Many Requests");
+        header(sprintf("Retry-After: %d", $rate_limit_exp - time()));
+    } else if (!verify_CSRF_token($_POST['csrf_token'])) { // CSRF token check
         $result = "ERROR: CSRF token mismatch.";
     } else {
         // Create membership

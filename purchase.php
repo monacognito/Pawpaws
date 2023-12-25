@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . "/controllers/rate_limiter.php");
 require_once(__DIR__ . "/controllers/purchase_controller.php");
 require_once(__DIR__ . "/controllers/helper/check_session.php");
 require_once(__DIR__ . "/controllers/helper/safe_mysqli_query.php");
@@ -13,10 +14,16 @@ check_session();
 if (!isset($_SESSION['csrf_token'])) generate_CSRF_token();
 
 $result = NULL;
+$rate_limit_exp = 0;
 
 // Buy item
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["buy_item"])) {
-    if (!verify_CSRF_token($_POST['csrf_token'])) {
+    $rate_limit_exp = rate_limiter(session_id(), 60, 1, 60 * 3);
+    if ($rate_limit_exp !== 0) {
+        $result = "ERROR: Too many attempts. Retry in " . $rate_limit_exp - time() . " seconds";
+        header("HTTP/1.1 429 Too Many Requests");
+        header(sprintf("Retry-After: %d", $rate_limit_exp - time()));
+    } else if (!verify_CSRF_token($_POST['csrf_token'])) {
         $result = "ERROR: CSRF token mismatch.";
     } else {
         $buy_item = $_POST["buy_item"];
@@ -31,8 +38,15 @@ $search_result_count = NULL;
 
 // search item
 if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['search'])) {
-    $keyword = htmlspecialchars(trim($_GET["keyword"]));
-    [$search_result, $search_result_count] = search_item($conn, $keyword);
+    $rate_limit_exp = rate_limiter(session_id(), 60, 1, 60 * 3);
+    if ($rate_limit_exp !== 0) {
+        $search_result = "ERROR: Too many attempts. Retry in " . $rate_limit_exp - time() . " seconds";
+        header("HTTP/1.1 429 Too Many Requests");
+        header(sprintf("Retry-After: %d", $rate_limit_exp - time()));
+    } else {
+        $keyword = htmlspecialchars(trim($_GET["keyword"]));
+        [$search_result, $search_result_count] = search_item($conn, $keyword);
+    }
 }
 
 // Get items
